@@ -5,828 +5,680 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Work Fusion — UX Research Dashboard</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
-  :root {
-    --bg: #0f1117;
-    --surface: #171b26;
-    --surface2: #1e2434;
-    --border: #2a3047;
-    --accent: #6c63ff;
-    --accent2: #38d9a9;
-    --accent3: #ffa94d;
-    --accent4: #f06595;
-    --text: #e8eaf0;
-    --muted: #7a82a0;
-    --good: #38d9a9;
-    --mid: #ffa94d;
-    --bad: #f06595;
-  }
+:root {
+  --bg: #f5f4f0;
+  --white: #ffffff;
+  --ink: #1a1a1a;
+  --ink2: #444;
+  --muted: #888;
+  --border: #e0ded8;
+  --border2: #ccc;
+  --green: #1e7a4e;
+  --green-bg: #eaf5ee;
+  --yellow: #7a6010;
+  --yellow-bg: #fdf6e0;
+  --red: #a0201a;
+  --red-bg: #fdecea;
+  --blue: #1a4fa0;
+  --blue-bg: #e8eefc;
+  --accent: #1a1a1a;
+  --tag-bg: #e8e6e0;
+}
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+* { margin:0; padding:0; box-sizing:border-box; }
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Inter', sans-serif;
-    font-size: 14px;
-    line-height: 1.6;
-    min-height: 100vh;
-  }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+}
 
-  /* HEADER */
-  .header {
-    padding: 32px 48px 24px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 24px;
-  }
-  .header-left {}
-  .eyebrow {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 8px;
-  }
-  .title {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 28px;
-    font-weight: 700;
-    color: var(--text);
-    letter-spacing: -0.02em;
-  }
-  .subtitle {
-    color: var(--muted);
-    font-size: 13px;
-    margin-top: 4px;
-  }
-  .meta-chips {
-    display: flex;
-    gap: 8px;
-    margin-top: 14px;
-    flex-wrap: wrap;
-  }
-  .chip {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 4px 12px;
-    font-size: 12px;
-    color: var(--muted);
-  }
-  .chip span { color: var(--text); font-weight: 500; }
+/* ── HEADER ── */
+.header {
+  background: var(--ink);
+  color: #fff;
+  padding: 28px 40px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 20px;
+}
+.header-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.logo-box {
+  width: 38px; height: 38px;
+  background: #fff;
+  color: var(--ink);
+  font-weight: 700;
+  font-size: 13px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 6px;
+  letter-spacing: -0.03em;
+}
+.header-title {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+.header-sub {
+  font-size: 12px;
+  color: rgba(255,255,255,0.55);
+  margin-top: 3px;
+}
+.header-chips {
+  display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end;
+}
+.hchip {
+  border: 1px solid rgba(255,255,255,0.2);
+  color: rgba(255,255,255,0.7);
+  padding: 4px 10px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+}
 
-  /* MAIN GRID */
-  .main {
-    padding: 32px 48px;
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 20px;
-  }
+/* ── GRID ── */
+.page { padding: 28px 40px 48px; }
 
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 22px 24px;
-  }
-  .card.wide { grid-column: span 2; }
-  .card.full { grid-column: span 3; }
+.section-title {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
 
-  .card-label {
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 14px;
-  }
+.row { display: flex; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
 
-  /* BIG NUMBER */
-  .big-num {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 52px;
-    font-weight: 700;
-    letter-spacing: -0.03em;
-    line-height: 1;
-  }
-  .big-num-unit {
-    font-size: 18px;
-    color: var(--muted);
-    font-weight: 400;
-    margin-left: 2px;
-  }
-  .grade-badge {
-    display: inline-block;
-    margin-top: 10px;
-    padding: 4px 12px;
-    border-radius: 6px;
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.05em;
-  }
-  .grade-good { background: rgba(56,217,169,0.12); color: var(--good); border: 1px solid rgba(56,217,169,0.2); }
-  .grade-mid { background: rgba(255,169,77,0.12); color: var(--mid); border: 1px solid rgba(255,169,77,0.2); }
-  .grade-bad { background: rgba(240,101,149,0.12); color: var(--bad); border: 1px solid rgba(240,101,149,0.2); }
+.card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 18px 20px;
+  flex: 1;
+  min-width: 0;
+}
+.card.no-pad { padding: 0; }
 
-  .delta {
-    font-size: 12px;
-    color: var(--muted);
-    margin-top: 6px;
-  }
+/* ── STAT CARD ── */
+.stat-icon { font-size: 18px; margin-bottom: 6px; }
+.stat-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 32px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+.stat-label {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+}
+.stat-sub {
+  font-size: 12px;
+  margin-top: 6px;
+  font-weight: 500;
+}
+.badge {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 3px;
+}
+.badge-green { background: var(--green-bg); color: var(--green); }
+.badge-yellow { background: var(--yellow-bg); color: var(--yellow); }
+.badge-red { background: var(--red-bg); color: var(--red); }
+.badge-blue { background: var(--blue-bg); color: var(--blue); }
+.badge-gray { background: var(--tag-bg); color: var(--ink2); }
 
-  /* SUS BREAKDOWN */
-  .sus-items { display: flex; flex-direction: column; gap: 10px; }
-  .sus-row { display: flex; align-items: center; gap: 10px; }
-  .sus-q {
-    font-size: 11px;
-    color: var(--muted);
-    flex: 0 0 180px;
-    line-height: 1.3;
-  }
-  .bar-bg {
-    flex: 1;
-    height: 6px;
-    background: var(--surface2);
-    border-radius: 10px;
-    overflow: hidden;
-  }
-  .bar-fill {
-    height: 100%;
-    border-radius: 10px;
-    transition: width 0.8s cubic-bezier(.4,0,.2,1);
-  }
-  .bar-val {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--text);
-    flex: 0 0 32px;
-    text-align: right;
-  }
+/* ── SUS BAR CHART ── */
+.sus-chart { padding: 20px; }
+.sus-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.sus-name { flex: 0 0 110px; font-size: 11px; color: var(--ink2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sus-bar-bg { flex: 1; height: 14px; background: var(--bg); border-radius: 2px; overflow: hidden; position: relative; }
+.sus-bar { height: 100%; border-radius: 2px; transition: width .6s ease; }
+.sus-score { flex: 0 0 38px; font-size: 11px; font-family: 'JetBrains Mono', monospace; font-weight: 500; text-align: right; }
+.sus-legend { display: flex; gap: 14px; margin-top: 12px; }
+.sus-legend-item { display: flex; align-items: center; gap: 5px; font-size: 10px; color: var(--muted); }
+.sus-legend-dot { width: 10px; height: 10px; border-radius: 2px; }
+.sus-ref-line { position: absolute; left: 0; width: 100%; height: 100%; pointer-events: none; }
 
-  /* UEQ Grid */
-  .ueq-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-  }
-  .ueq-item {
-    background: var(--surface2);
-    border-radius: 8px;
-    padding: 14px 16px;
-  }
-  .ueq-pair {
-    display: flex;
-    justify-content: space-between;
-    font-size: 11px;
-    color: var(--muted);
-    margin-bottom: 8px;
-  }
-  .ueq-score-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .ueq-dots {
-    display: flex;
-    gap: 3px;
-    flex: 1;
-  }
-  .ueq-dot {
-    flex: 1;
-    height: 18px;
-    border-radius: 3px;
-    background: var(--surface);
-    position: relative;
-  }
-  .ueq-dot.active { background: var(--accent); }
-  .ueq-dot.active-high { background: var(--good); }
-  .ueq-dot.active-mid { background: var(--mid); }
-  .ueq-val {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 15px;
-    font-weight: 700;
-    flex: 0 0 28px;
-    text-align: right;
-  }
+/* ── UEQ CHART ── */
+.ueq-chart { padding: 20px; }
+.ueq-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.ueq-label { flex: 0 0 130px; font-size: 11px; color: var(--ink2); }
+.ueq-track { flex: 1; position: relative; height: 8px; background: var(--bg); border-radius: 2px; }
+.ueq-fill { position: absolute; height: 100%; border-radius: 2px; }
+.ueq-zero { position: absolute; left: 50%; top: -3px; bottom: -3px; width: 1px; background: var(--border2); }
+.ueq-val { flex: 0 0 36px; font-size: 11px; font-family: 'JetBrains Mono', monospace; font-weight: 500; text-align: right; }
+.ueq-dim-label { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 12px 0 8px; }
 
-  /* ROLE PIE */
-  .role-list { display: flex; flex-direction: column; gap: 10px; }
-  .role-row { display: flex; align-items: center; gap: 10px; }
-  .role-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-  .role-name { flex: 1; font-size: 12px; color: var(--muted); }
-  .role-count {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text);
-    flex: 0 0 20px;
-    text-align: right;
-  }
-  .role-pct {
-    font-size: 11px;
-    color: var(--muted);
-    flex: 0 0 36px;
-    text-align: right;
-  }
-  .role-bar-bg {
-    flex: 0 0 60px;
-    height: 4px;
-    background: var(--surface2);
-    border-radius: 10px;
-    overflow: hidden;
-  }
-  .role-bar-fill { height: 100%; border-radius: 10px; }
+/* ── ROLE COMPARISON ── */
+.role-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.role-card {
+  background: var(--bg);
+  border-radius: 4px;
+  padding: 12px 14px;
+}
+.role-name-tag {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+.role-sus {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 22px;
+  font-weight: 500;
+}
+.role-n { font-size: 11px; color: var(--muted); margin-top: 2px; }
 
-  /* COMPLETION */
-  .completion-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-  }
-  .comp-item {
-    background: var(--surface2);
-    border-radius: 8px;
-    padding: 14px;
-    text-align: center;
-  }
-  .comp-val {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 24px;
-    font-weight: 700;
-  }
-  .comp-label {
-    font-size: 11px;
-    color: var(--muted);
-    margin-top: 4px;
-  }
+/* ── LISTS ── */
+.insight-list { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+.insight-list li {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--ink2);
+}
+.insight-list li::before {
+  content: '—';
+  color: var(--muted);
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.priority-list { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+.priority-item {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.p-badge {
+  flex-shrink: 0;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 2px 5px;
+  border-radius: 2px;
+  margin-top: 2px;
+  letter-spacing: 0.05em;
+}
 
-  /* OVERALL RATINGS */
-  .rating-rows { display: flex; flex-direction: column; gap: 12px; }
-  .rating-row { display: flex; align-items: center; gap: 12px; }
-  .rating-label { font-size: 12px; color: var(--muted); flex: 0 0 140px; }
-  .star-track {
-    flex: 1;
-    display: flex;
-    gap: 3px;
-    align-items: center;
-  }
-  .star-seg {
-    height: 8px;
-    border-radius: 2px;
-    background: var(--surface2);
-    flex: 1;
-  }
-  .star-seg.lit { background: var(--accent); }
-  .rating-num {
-    font-size: 13px;
-    font-weight: 600;
-    flex: 0 0 28px;
-    text-align: right;
-  }
+/* ── COMPLETION ── */
+.completion-row { display: flex; gap: 12px; align-items: stretch; }
+.comp-block {
+  flex: 1;
+  background: var(--bg);
+  border-radius: 4px;
+  padding: 14px 16px;
+  text-align: center;
+}
+.comp-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 28px;
+  font-weight: 500;
+}
+.comp-of { font-size: 11px; color: var(--muted); }
+.comp-label { font-size: 11px; color: var(--ink2); margin-top: 4px; }
 
-  /* DEVICES */
-  .device-list { display: flex; flex-direction: column; gap: 8px; }
-  .device-row { display: flex; align-items: center; gap: 10px; }
-  .device-icon { font-size: 18px; flex: 0 0 24px; }
-  .device-name { flex: 1; font-size: 12px; color: var(--muted); }
-  .device-count { font-size: 13px; font-weight: 600; }
+/* ── TAGS ── */
+.tag-cloud { display: flex; flex-wrap: wrap; gap: 6px; }
+.tag {
+  background: var(--tag-bg);
+  border-radius: 3px;
+  padding: 4px 9px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--ink2);
+}
+.tag.pos { background: var(--green-bg); color: var(--green); }
+.tag.neg { background: var(--red-bg); color: var(--red); }
 
-  /* QUOTE / INSIGHT */
-  .insight-list { display: flex; flex-direction: column; gap: 10px; }
-  .insight-item {
-    background: var(--surface2);
-    border-left: 3px solid var(--accent);
-    border-radius: 0 8px 8px 0;
-    padding: 10px 14px;
-    font-size: 12px;
-    color: var(--muted);
-    line-height: 1.5;
-  }
-  .insight-item.warn { border-left-color: var(--mid); }
-  .insight-item.neg { border-left-color: var(--bad); }
-  .insight-tag {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 4px;
-    display: block;
-  }
-  .insight-tag.warn { color: var(--mid); }
-  .insight-tag.neg { color: var(--bad); }
+/* ── RATING TABLE ── */
+.rating-table { width: 100%; border-collapse: collapse; }
+.rating-table td { padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
+.rating-table td:first-child { color: var(--ink2); }
+.rating-table td:last-child { text-align: right; font-family: 'JetBrains Mono', monospace; font-weight: 500; }
+.rating-bar-cell { width: 120px; padding: 0 12px !important; }
+.rating-bar-bg { height: 6px; background: var(--bg); border-radius: 2px; overflow: hidden; }
+.rating-bar-fill { height: 100%; border-radius: 2px; background: var(--ink); }
 
-  /* UEQ DIMENSIONS */
-  .ueq-dim-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 14px;
-  }
-  .ueq-dim {
-    background: var(--surface2);
-    border-radius: 10px;
-    padding: 16px;
-    text-align: center;
-  }
-  .ueq-dim-score {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 32px;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-  }
-  .ueq-dim-label {
-    font-size: 11px;
-    color: var(--muted);
-    margin-top: 6px;
-    font-weight: 500;
-  }
-  .ueq-dim-desc {
-    font-size: 10px;
-    color: var(--muted);
-    margin-top: 3px;
-    opacity: 0.7;
-  }
-  .ueq-bench {
-    margin-top: 8px;
-    font-size: 10px;
-    font-weight: 600;
-    padding: 2px 8px;
-    border-radius: 12px;
-    display: inline-block;
-  }
-  .bench-good { background: rgba(56,217,169,0.1); color: var(--good); }
-  .bench-mid { background: rgba(255,169,77,0.1); color: var(--mid); }
-  .bench-bad { background: rgba(240,101,149,0.1); color: var(--bad); }
+/* ── FOOT ── */
+.footer {
+  border-top: 1px solid var(--border2);
+  padding: 14px 40px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+}
 
-  /* FOOTER */
-  .footer {
-    padding: 20px 48px;
-    border-top: 1px solid var(--border);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: var(--muted);
-    font-size: 11px;
-  }
+/* ── DIVIDER ── */
+.divider { height: 1px; background: var(--border); margin: 20px 0; }
 
-  /* SVG donut */
-  .donut-wrap { display: flex; align-items: center; gap: 20px; }
-  .donut-legend { display: flex; flex-direction: column; gap: 8px; }
-
-  /* Tooltip-like annotation */
-  .annotation {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 11px;
-    color: var(--muted);
-    margin-top: 4px;
-  }
-  .annotation::before {
-    content: '—';
-    color: var(--accent);
-  }
-
-  @media (max-width: 900px) {
-    .main { grid-template-columns: 1fr; padding: 20px; }
-    .card.wide, .card.full { grid-column: span 1; }
-    .header { padding: 24px 20px 18px; }
-    .ueq-dim-grid { grid-template-columns: repeat(2,1fr); }
-    .completion-grid { grid-template-columns: 1fr 1fr; }
-  }
+.card-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.card-title span { color: var(--muted); font-weight: 400; }
 </style>
 </head>
 <body>
 
 <!-- HEADER -->
 <header class="header">
-  <div class="header-left">
-    <div class="eyebrow">UX Research · June 2026</div>
-    <div class="title">Work Fusion — Usability Report</div>
-    <div class="subtitle">System Usability Scale · User Experience Questionnaire Short</div>
-    <div class="meta-chips">
-      <div class="chip"><span>20</span> Participants</div>
-      <div class="chip"><span>4</span> Roles Tested</div>
-      <div class="chip"><span>4</span> Form Scenarios</div>
-      <div class="chip"><span>Jun 17–18, 2026</span></div>
+  <div class="header-logo">
+    <div class="logo-box">WF</div>
+    <div>
+      <div class="header-title">Work Fusion</div>
+      <div class="header-sub">UX Research Dashboard · Usability Testing Round 2 · June 2026</div>
     </div>
+  </div>
+  <div class="header-chips">
+    <div class="hchip">20 participants</div>
+    <div class="hchip">4 form types tested</div>
+    <div class="hchip">4 roles</div>
+    <div class="hchip">SUS + UEQ-S</div>
   </div>
 </header>
 
-<!-- MAIN DASHBOARD -->
-<div class="main">
+<div class="page">
 
-  <!-- SUS Score Big Number -->
-  <div class="card">
-    <div class="card-label">SUS Score</div>
-    <div class="big-num" id="sus-score" style="color: var(--good);">—</div>
-    <div style="margin-top: 8px;">
-      <span class="grade-badge grade-good" id="sus-grade">—</span>
+  <!-- ── TOP STATS ── -->
+  <div class="section-title">Key Metrics</div>
+  <div class="row">
+    <div class="card" style="flex: 1.2">
+      <div class="stat-icon">📊</div>
+      <div class="stat-val">70.1<span style="font-size:16px;color:var(--muted)">/100</span></div>
+      <div class="stat-label">SUS Score</div>
+      <div class="badge badge-green">Good · Grade B</div>
+      <div class="stat-sub" style="color:var(--muted);font-size:11px;margin-top:8px;">Industry avg ≈ 68 · σ = 7.5</div>
     </div>
-    <div class="delta" style="margin-top: 10px;">Industry average ≈ 68 · Good ≥ 71.4</div>
-    <div class="annotation">Based on 20 valid respondents across all roles</div>
+    <div class="card" style="flex: 1.2">
+      <div class="stat-icon">✦</div>
+      <div class="stat-val">+1.45<span style="font-size:16px;color:var(--muted)">/3</span></div>
+      <div class="stat-label">UEQ-S Overall</div>
+      <div class="badge badge-green">Above Neutral</div>
+      <div class="stat-sub" style="color:var(--muted);font-size:11px;margin-top:8px;">Pragmatic +1.46 · Hedonic +1.44</div>
+    </div>
+    <div class="card">
+      <div class="stat-icon">☺</div>
+      <div class="stat-val">4.2<span style="font-size:16px;color:var(--muted)">/5</span></div>
+      <div class="stat-label">Avg Satisfaction</div>
+      <div class="badge badge-green">Positive</div>
+    </div>
+    <div class="card">
+      <div class="stat-icon">👆</div>
+      <div class="stat-val">4.2<span style="font-size:16px;color:var(--muted)">/5</span></div>
+      <div class="stat-label">Ease of Use</div>
+      <div class="badge badge-green">Positive</div>
+    </div>
+    <div class="card">
+      <div class="stat-icon">→</div>
+      <div class="stat-val">6.8<span style="font-size:16px;color:var(--muted)">/10</span></div>
+      <div class="stat-label">Would Recommend</div>
+      <div class="badge badge-yellow">Moderate</div>
+    </div>
   </div>
 
-  <!-- SUS per-question breakdown -->
-  <div class="card wide">
-    <div class="card-label">SUS — Item Scores (contribution to total, max 4.5 each)</div>
-    <div class="sus-items" id="sus-items"></div>
-  </div>
+  <!-- ── SUS + UEQ CHARTS ── -->
+  <div class="row" style="align-items: flex-start;">
 
-  <!-- UEQ-S Dimensions Summary -->
-  <div class="card full">
-    <div class="card-label">UEQ-S — Dimension Scores (scale 1–7, benchmark vs. database)</div>
-    <div class="ueq-dim-grid" id="ueq-dims"></div>
-  </div>
-
-  <!-- UEQ-S Item Detail -->
-  <div class="card wide">
-    <div class="card-label">UEQ-S — Individual Bipolar Item Averages</div>
-    <div class="ueq-grid" id="ueq-items"></div>
-  </div>
-
-  <!-- Overall Ratings -->
-  <div class="card">
-    <div class="card-label">Overall Experience Ratings (1–10)</div>
-    <div class="rating-rows" id="ratings"></div>
-  </div>
-
-  <!-- Role Distribution -->
-  <div class="card">
-    <div class="card-label">Participant Role Distribution</div>
-    <div class="role-list" id="roles"></div>
-  </div>
-
-  <!-- Task Completion -->
-  <div class="card">
-    <div class="card-label">Task Completion Status</div>
-    <div class="completion-grid" id="completion"></div>
-  </div>
-
-  <!-- Device Usage -->
-  <div class="card">
-    <div class="card-label">Testing Devices</div>
-    <div class="device-list" id="devices"></div>
-  </div>
-
-  <!-- Key Insights -->
-  <div class="card wide">
-    <div class="card-label">Key Insights & Pain Points</div>
-    <div class="insight-list">
-      <div class="insight-item">
-        <span class="insight-tag">Strength</span>
-        Tipe input (text, date, dropdown, checkbox, dll.) dinilai mudah dipahami oleh mayoritas responden — rata-rata skor 4.3/5.
+    <!-- SUS Chart -->
+    <div class="card no-pad" style="flex: 1.4;">
+      <div class="sus-chart">
+        <div class="card-title">SUS Scores by Participant <span>Good ≥ 71 · OK 51–70 · Poor &lt; 51</span></div>
+        <div id="sus-chart"></div>
+        <div class="sus-legend">
+          <div class="sus-legend-item"><div class="sus-legend-dot" style="background:#1e7a4e"></div> Good (≥71)</div>
+          <div class="sus-legend-item"><div class="sus-legend-dot" style="background:#b07d12"></div> OK (51–70)</div>
+          <div class="sus-legend-item"><div class="sus-legend-dot" style="background:#a0201a"></div> Poor (&lt;51)</div>
+        </div>
       </div>
-      <div class="insight-item">
-        <span class="insight-tag">Strength</span>
-        Validasi field wajib dan konfirmasi submit dinilai membantu — rata-rata skor 4.5/5 untuk keyakinan setelah submit.
+    </div>
+
+    <!-- UEQ Chart -->
+    <div class="card no-pad" style="flex: 1;">
+      <div class="ueq-chart">
+        <div class="card-title">UEQ-S Dimensions <span>avg, −3 to +3</span></div>
+        <div class="ueq-dim-label">Pragmatic Quality</div>
+        <div id="ueq-prag"></div>
+        <div class="ueq-dim-label" style="margin-top:16px">Hedonic Quality</div>
+        <div id="ueq-hed"></div>
       </div>
-      <div class="insight-item warn">
-        <span class="insight-tag warn">Friction</span>
-        Alur mobile Approver masih kurang jelas — responden Ratna Sari tidak berhasil menyelesaikan proses review, skor rata-rata lebih rendah di segmen ini.
+    </div>
+
+  </div>
+
+  <!-- ── ROLE COMPARISON + COMPLETION ── -->
+  <div class="row">
+    <div class="card" style="flex:1">
+      <div class="card-title">SUS by Role</div>
+      <div class="role-grid">
+        <div class="role-card">
+          <div class="role-name-tag">Assigner / Admin</div>
+          <div class="role-sus">72.2</div>
+          <div class="role-n">n=9 · Web task assigner</div>
+          <div class="badge badge-green" style="margin-top:8px">Good</div>
+        </div>
+        <div class="role-card">
+          <div class="role-name-tag">Assignee / Worker</div>
+          <div class="role-sus">71.8</div>
+          <div class="role-n">n=7 · Mobile worker</div>
+          <div class="badge badge-green" style="margin-top:8px">Good</div>
+        </div>
+        <div class="role-card">
+          <div class="role-name-tag">Form Creator</div>
+          <div class="role-sus">67.5</div>
+          <div class="role-n">n=2 · Template admin</div>
+          <div class="badge badge-yellow" style="margin-top:8px">OK</div>
+        </div>
+        <div class="role-card">
+          <div class="role-name-tag">Approver / Observer</div>
+          <div class="role-sus">57.5</div>
+          <div class="role-n">n=2 · Review & approve</div>
+          <div class="badge badge-red" style="margin-top:8px">Needs work</div>
+        </div>
       </div>
-      <div class="insight-item warn">
-        <span class="insight-tag warn">Friction</span>
-        Beberapa responden memerlukan bantuan saat proses assignment (memilih assignee, mengatur due date) — terutama pengguna yang belum familiar dengan task management.
+      <div style="font-size:11px;color:var(--muted);margin-top:12px;">Approver flow scores notably lower — review UX needs attention.</div>
+    </div>
+
+    <div class="card" style="flex:1">
+      <div class="card-title">Task Completion</div>
+      <div class="completion-row">
+        <div class="comp-block">
+          <div class="comp-num" style="color:var(--green)">3</div>
+          <div class="comp-of">/20</div>
+          <div class="comp-label">Fully completed</div>
+        </div>
+        <div class="comp-block">
+          <div class="comp-num" style="color:#b07d12">13</div>
+          <div class="comp-of">/20</div>
+          <div class="comp-label">Partially completed</div>
+        </div>
+        <div class="comp-block">
+          <div class="comp-num" style="color:var(--red)">2</div>
+          <div class="comp-of">/20</div>
+          <div class="comp-label">Not completed</div>
+        </div>
+        <div class="comp-block">
+          <div class="comp-num" style="color:var(--muted)">2</div>
+          <div class="comp-of">/20</div>
+          <div class="comp-label">Not attempted</div>
+        </div>
       </div>
-      <div class="insight-item neg">
-        <span class="insight-tag neg">Gap</span>
-        Kebutuhan teknis masih dirasakan — sebagian responden merasa perlu belajar lebih banyak sebelum mandiri menggunakan sistem (SUS Q10 rata-rata 2.1, artinya banyak yang merasa perlu belajar).
+
+      <div class="divider"></div>
+
+      <div class="card-title">UX Scale Ratings <span>avg /5 unless noted</span></div>
+      <table class="rating-table">
+        <tr>
+          <td>Mudah dipahami</td>
+          <td class="rating-bar-cell"><div class="rating-bar-bg"><div class="rating-bar-fill" style="width:84%"></div></div></td>
+          <td>4.2 /5</td>
+        </tr>
+        <tr>
+          <td>Kepuasan overall</td>
+          <td class="rating-bar-cell"><div class="rating-bar-bg"><div class="rating-bar-fill" style="width:83%"></div></div></td>
+          <td>4.2 /5</td>
+        </tr>
+        <tr>
+          <td>Web–mobile jelas</td>
+          <td class="rating-bar-cell"><div class="rating-bar-bg"><div class="rating-bar-fill" style="width:86%"></div></div></td>
+          <td>4.3 /5</td>
+        </tr>
+        <tr>
+          <td>Kemungkinan pakai</td>
+          <td class="rating-bar-cell"><div class="rating-bar-bg"><div class="rating-bar-fill" style="width:68%"></div></div></td>
+          <td>6.8 /10</td>
+        </tr>
+        <tr>
+          <td>Kemungkinan rekomen</td>
+          <td class="rating-bar-cell"><div class="rating-bar-bg"><div class="rating-bar-fill" style="width:67%"></div></div></td>
+          <td>6.7 /10</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── PAIN POINTS + STRENGTHS + PRIORITIES ── -->
+  <div class="row">
+    <div class="card" style="flex:1">
+      <div class="card-title">⚠ Pain Points</div>
+      <ul class="insight-list">
+        <li>Alur approver mobile kurang jelas — Approver tidak berhasil menyelesaikan review</li>
+        <li>Pengguna Form Creator ragu langkah selanjutnya setelah membuat template</li>
+        <li>Beberapa responden memerlukan bantuan saat memilih assignee dan mengatur due date</li>
+        <li>Inkonsistensi label dan tampilan antara web dan mobile</li>
+        <li>Status task setelah submit belum sepenuhnya meyakinkan bagi sebagian pengguna</li>
+        <li>Pengguna baru merasa perlu waktu belajar sebelum mandiri (SUS Q4 avg tinggi)</li>
+        <li>Tipe input attachment paling sering membutuhkan klarifikasi</li>
+      </ul>
+    </div>
+    <div class="card" style="flex:1">
+      <div class="card-title">✓ Strengths</div>
+      <ul class="insight-list">
+        <li>Tipe input (text, date, dropdown, checkbox, rating) dinilai mudah dipahami lintas role</li>
+        <li>Validasi field wajib membantu pengguna menghindari kesalahan submit</li>
+        <li>Alur web-ke-mobile secara umum dapat diikuti tanpa banyak bantuan</li>
+        <li>Evidence, timestamp, dan nama assignee dinilai sangat membantu proses review</li>
+        <li>Mengurangi ketergantungan pada WhatsApp, Google Forms, dan spreadsheet</li>
+        <li>Tampilan bersih dan konsisten diapresiasi mayoritas responden</li>
+        <li>Status konfirmasi setelah submit dinilai jelas oleh pengguna mobile</li>
+      </ul>
+    </div>
+    <div class="card" style="flex:1">
+      <div class="card-title">↑ Top Priorities</div>
+      <ul class="priority-list">
+        <li><span class="p-badge badge-red">P1</span> Perbaiki alur approver mobile — review & approval flow perlu redesign</li>
+        <li><span class="p-badge badge-red">P1</span> Tambahkan onboarding / guidance setelah pembuatan template</li>
+        <li><span class="p-badge badge-yellow">P2</span> Perjelas status task setelah submit di sisi assignee</li>
+        <li><span class="p-badge badge-yellow">P2</span> Tingkatkan konsistensi label web ↔ mobile</li>
+        <li><span class="p-badge badge-yellow">P2</span> Tambah panduan in-app untuk pengguna baru (tooltip / walkthrough)</li>
+        <li><span class="p-badge badge-gray">P3</span> Perbaiki UX attachment — preview dan feedback upload lebih jelas</li>
+        <li><span class="p-badge badge-gray">P3</span> Optimalkan alur multi-assignee selection pada web admin</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ── FORMS + THEMES ── -->
+  <div class="row">
+    <div class="card" style="flex:1">
+      <div class="card-title">Forms Tested &amp; Qualitative Themes</div>
+      <div style="margin-bottom:12px;">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:6px;">Forms tested</div>
+        <div class="tag-cloud">
+          <span class="tag">Pengajuan Cuti</span>
+          <span class="tag">Pembelian Barang</span>
+          <span class="tag">Perjalanan Dinas</span>
+          <span class="tag">Customer Feedback</span>
+        </div>
       </div>
-      <div class="insight-item">
-        <span class="insight-tag">Opportunity</span>
-        Work Fusion dinilai lebih rapi dibanding WhatsApp / Google Forms — mayoritas setuju sistem ini mengurangi ketergantungan pada alat kerja terpisah.
+      <div style="margin-bottom:12px;">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:6px;">Positive themes</div>
+        <div class="tag-cloud">
+          <span class="tag pos">Audit trail</span>
+          <span class="tag pos">Clean UI</span>
+          <span class="tag pos">Templates</span>
+          <span class="tag pos">Mobile UX</span>
+          <span class="tag pos">Terintegrasi</span>
+          <span class="tag pos">Status jelas</span>
+        </div>
       </div>
+      <div>
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:6px;">Negative themes</div>
+        <div class="tag-cloud">
+          <span class="tag neg">Approver flow</span>
+          <span class="tag neg">No onboarding</span>
+          <span class="tag neg">Inkonsistensi</span>
+          <span class="tag neg">Attachment UX</span>
+          <span class="tag neg">Butuh belajar</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="flex:1">
+      <div class="card-title">Device & Familiarity Breakdown</div>
+      <div style="margin-bottom:16px;">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px;">Devices used</div>
+        <div id="device-bars"></div>
+      </div>
+      <div class="divider"></div>
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px;margin-top:14px;">App familiarity</div>
+      <div id="famil-bars"></div>
     </div>
   </div>
 
 </div>
 
+<!-- FOOTER -->
 <footer class="footer">
-  <div>Work Fusion · Internal UX Research Report · Sidoarjo, East Java 2026</div>
-  <div>N=20 · SUS + UEQ-S methodology</div>
+  <div>Work Fusion · UX Research · Round 2 · June 17–18, 2026</div>
+  <div>20 participants · SUS 70.1 · UEQ-S +1.45 · Generated from Google Forms data</div>
 </footer>
 
 <script>
-// ============================================================
-// DATA PROCESSING
-// ============================================================
-
-// RAW SUS RESPONSES (10 items, 1-5 scale)
-// Columns in order: Q1..Q10
-// Source: columns "Saya ingin menggunakan..." through "Saya perlu belajar..."
-// SUS scoring: odd Q: (score-1), even Q: (5-score), then sum*2.5
-const susRaw = [
-  // [q1,q2,q3,q4,q5,q6,q7,q8,q9,q10] - from spreadsheet
-  // Alex
-  [4,2,4,1,5,5,5,1,5,1],
-  // Rahayu Anita
-  [4,2,4,2,4,4,4,2,4,2],
-  // Ulpia
-  [5,1,4,2,5,4,5,1,5,3],
-  // RA
-  [4,2,4,2,4,4,4,2,4,2],
-  // Aida
-  [5,3,4,2,4,4,5,2,4,1],
-  // SI
-  [3,4,2,1,4,4,4,3,4,2],
-  // putri
-  [4,2,4,2,4,5,4,2,4,3],
-  // Najwa
-  [4,3,5,3,5,5,5,3,5,2],
-  // Zahra
-  [5,3,4,4,5,5,5,3,5,1],
-  // Yuyun
-  [5,2,4,2,5,4,5,3,5,2],
-  // Jiyna
-  [4,1,5,3,5,4,4,4,5,1],
-  // Husnul
-  [4,2,5,2,5,5,4,2,4,2],
-  // kia
-  [4,3,4,1,4,5,4,1,4,2],
-  // Fahriansyah
-  [4,3,4,3,4,4,4,2,4,2],
-  // Tiara R
-  [3,2,2,2,3,4,3,2,4,2],
-  // Fahmi Ikhlasul
-  [4,2,4,2,5,4,4,1,4,2],
-  // Rara Khumairah
-  [4,3,4,1,4,4,4,2,4,3],
-  // Ratna Sari
-  [3,4,3,1,3,3,3,1,3,3],
-  // HA
-  [4,1,3,2,4,4,4,4,4,2],
-  // Tiara Ananda
-  [4,1,4,2,5,4,4,2,4,1],
+// ── SUS BAR CHART ──
+const susData = [
+  {name:'Alex', role:'Assignee', score:82.5},
+  {name:'Rahayu A', role:'Creator', score:70.0},
+  {name:'Ulpia', role:'Assigner', score:82.5},
+  {name:'RA', role:'Assigner', score:70.0},
+  {name:'Aida', role:'Assigner', score:75.0},
+  {name:'SI', role:'Assigner', score:57.5},
+  {name:'Putri', role:'Assignee', score:65.0},
+  {name:'Najwa', role:'Assigner', score:70.0},
+  {name:'Zahra', role:'Assignee', score:70.0},
+  {name:'Yuyun', role:'Assigner', score:77.5},
+  {name:'Jiyna', role:'Assigner', score:75.0},
+  {name:'Husnul', role:'Assigner', score:72.5},
+  {name:'Kia', role:'Assigner', score:70.0},
+  {name:'Fahriansyah', role:'Assignee', score:65.0},
+  {name:'Tiara R', role:'Observer', score:57.5},
+  {name:'Fahmi I', role:'Assignee', score:75.0},
+  {name:'Rara K', role:'Assignee', score:67.5},
+  {name:'Ratna S', role:'Approver', score:57.5},
+  {name:'HA', role:'Creator', score:65.0},
+  {name:'Tiara A', role:'Assignee', score:77.5},
 ];
 
-function calcSUS(responses) {
-  return responses.map(row => {
-    let sum = 0;
-    row.forEach((v, i) => {
-      if ((i+1) % 2 === 1) sum += (v - 1);     // odd: positive
-      else sum += (5 - v);                       // even: negative
-    });
-    return sum * 2.5;
-  });
+function susColor(s) {
+  if (s >= 71) return '#1e7a4e';
+  if (s >= 51) return '#b07d12';
+  return '#a0201a';
 }
 
-const susScores = calcSUS(susRaw);
-const avgSUS = susScores.reduce((a,b)=>a+b,0) / susScores.length;
-
-// SUS grade
-function susGrade(s) {
-  if (s >= 90) return { label: 'Best Imaginable (A+)', cls: 'grade-good' };
-  if (s >= 80) return { label: 'Excellent (A)', cls: 'grade-good' };
-  if (s >= 70) return { label: 'Good (B)', cls: 'grade-good' };
-  if (s >= 58) return { label: 'Okay (C)', cls: 'grade-mid' };
-  if (s >= 51) return { label: 'Poor (D)', cls: 'grade-mid' };
-  return { label: 'Awful (F)', cls: 'grade-bad' };
-}
-
-// Per-question averages
-const susQLabels = [
-  'Ingin menggunakan rutin',
-  'Terlalu rumit digunakan',
-  'Mudah digunakan',
-  'Butuh bantuan teknis',
-  'Fitur terintegrasi baik',
-  'Terlalu banyak inkonsistensi',
-  'Pengguna lain bisa belajar cepat',
-  'Merepotkan digunakan',
-  'Percaya diri saat menggunakan',
-  'Perlu belajar banyak hal dulu',
-];
-
-// Contribution scores per item (normalised to 0-4.5 range per item → total max 45 → ×2.5 = 100)
-const susItemContrib = [];
-for (let q = 0; q < 10; q++) {
-  let total = 0;
-  susRaw.forEach(row => {
-    if ((q+1) % 2 === 1) total += (row[q] - 1);
-    else total += (5 - row[q]);
-  });
-  susItemContrib.push((total / susRaw.length) * 2.5); // avg contribution ×2.5
-}
-
-// ============================================================
-// UEQ-S RAW DATA (8 bipolar items, scale 1–7)
-// Menyulitkan-Memudahkan, Tidak efisien-Efisien,
-// Membingungkan-Jelas, Tidak dapat diprediksi-Dapat diprediksi,
-// Membosankan-Menarik, Tidak bermanfaat-Bermanfaat,
-// Konvensional-Inovatif, Menghambat-Mendukung
-const ueqRaw = [
-  [7,5,6,7,7,6,6,7],  // Alex
-  [6,5,6,5,5,5,5,6],  // Rahayu
-  [6,6,6,6,6,6,6,6],  // Ulpia
-  [6,6,5,6,5,5,5,5],  // RA
-  [7,6,7,6,6,7,6,7],  // Aida
-  [5,6,6,6,6,6,6,5],  // SI
-  [4,5,4,5,4,5,4,5],  // putri
-  [7,6,6,6,6,6,6,7],  // Najwa
-  [7,7,6,6,7,7,6,6],  // Zahra
-  [7,6,6,6,6,6,7,6],  // Yuyun
-  [7,6,6,7,7,7,6,7],  // Jiyna
-  [7,5,6,7,6,6,7,5],  // Husnul
-  [4,5,4,5,4,5,4,5],  // kia
-  [5,6,5,6,6,5,5,5],  // Fahriansyah
-  [3,4,4,3,5,3,3,3],  // Tiara R
-  [4,4,5,4,5,5,5,4],  // Fahmi
-  [5,5,5,4,5,5,4,5],  // Rara
-  [4,4,3,4,4,4,4,5],  // Ratna
-  [5,5,6,5,5,5,5,5],  // HA
-  [6,6,5,6,5,6,6,5],  // Tiara Ananda
-];
-
-const ueqLabels = [
-  ['Menyulitkan','Memudahkan'],
-  ['Tidak efisien','Efisien'],
-  ['Membingungkan','Jelas'],
-  ['Tdk dapat diprediksi','Dapat diprediksi'],
-  ['Membosankan','Menarik'],
-  ['Tidak bermanfaat','Bermanfaat'],
-  ['Konvensional','Inovatif'],
-  ['Menghambat','Mendukung'],
-];
-
-const ueqAvgs = ueqLabels.map((_, i) =>
-  ueqRaw.reduce((s, r) => s + r[i], 0) / ueqRaw.length
-);
-
-// UEQ-S Dimensions:
-// Pragmatic Quality = avg(Memudahkan, Efisien, Jelas, Dapat diprediksi) → items 0-3
-// Hedonic Quality = avg(Menarik, Bermanfaat, Inovatif, Mendukung) → items 4-7
-const pragAvg = (ueqAvgs[0]+ueqAvgs[1]+ueqAvgs[2]+ueqAvgs[3])/4;
-const hedAvg  = (ueqAvgs[4]+ueqAvgs[5]+ueqAvgs[6]+ueqAvgs[7])/4;
-const overallUEQ = (pragAvg + hedAvg) / 2;
-
-// Benchmark ratings (UEQ-S, scale 1-7, mean-based)
-// Above 5.5 = Excellent, 4.5-5.5 = Good, 3.5-4.5 = Above average, below = needs work
-function ueqBench(v) {
-  if (v >= 5.5) return { label: 'Excellent', cls: 'bench-good' };
-  if (v >= 4.5) return { label: 'Good', cls: 'bench-mid' };
-  return { label: 'Below avg', cls: 'bench-bad' };
-}
-
-// ============================================================
-// ROLES
-const roles = [
-  { name: 'Mobile Assignee / Worker', count: 7, color: '#6c63ff' },
-  { name: 'Web Task Assigner / Admin', count: 9, color: '#38d9a9' },
-  { name: 'Web Form Creator / Admin', count: 2, color: '#ffa94d' },
-  { name: 'Mobile Approver / Supervisor', count: 1, color: '#f06595' },
-  { name: 'End-to-End Observer', count: 1, color: '#a9e34b' },
-];
-
-// COMPLETION
-const completion = [
-  { label: 'Berhasil Sepenuhnya', count: 3, color: '#38d9a9' },
-  { label: 'Berhasil Sebagian', count: 13, color: '#ffa94d' },
-  { label: 'Tidak Berhasil', count: 2, color: '#f06595' },
-  { label: 'Belum', count: 2, color: '#7a82a0' },
-];
-
-// DEVICES
-const devices = [
-  { icon: '📱', name: 'Android (Mobile)', count: 13 },
-  { icon: '💻', name: 'Laptop / PC', count: 6 },
-  { icon: '📟', name: 'Tablet', count: 1 },
-];
-
-// OVERALL RATINGS (out of 10)
-const overallRatings = [
-  { label: 'Kemudahan penggunaan', val: 4.35, max: 5, scale: 5 },
-  { label: 'Kepuasan pengalaman', val: 4.2, max: 5, scale: 5 },
-  { label: 'Web–Mobile clarity', val: 4.3, max: 5, scale: 5 },
-  { label: 'Kemungkinan digunakan', val: 7.05, max: 10, scale: 10 },
-  { label: 'Kemungkinan merekomendasikan', val: 7.05, max: 10, scale: 10 },
-];
-
-// ============================================================
-// RENDER
-// ============================================================
-
-// SUS Score
-document.getElementById('sus-score').textContent = avgSUS.toFixed(1);
-const g = susGrade(avgSUS);
-const gradeBadge = document.getElementById('sus-grade');
-gradeBadge.textContent = g.label;
-gradeBadge.className = 'grade-badge ' + g.cls;
-if (avgSUS < 70) document.getElementById('sus-score').style.color = 'var(--mid)';
-
-// SUS items
-const susItemsEl = document.getElementById('sus-items');
-const maxContrib = Math.max(...susItemContrib);
-susItemContrib.forEach((val, i) => {
-  const pct = (val / maxContrib) * 100;
-  const col = val >= 7 ? '#38d9a9' : val >= 5 ? '#ffa94d' : '#f06595';
-  susItemsEl.innerHTML += `
+const susEl = document.getElementById('sus-chart');
+susData.forEach(d => {
+  const pct = (d.score / 100) * 100;
+  const col = susColor(d.score);
+  susEl.innerHTML += `
     <div class="sus-row">
-      <div class="sus-q">Q${i+1} ${susQLabels[i]}</div>
-      <div class="bar-bg"><div class="bar-fill" style="width:${pct}%;background:${col}"></div></div>
-      <div class="bar-val">${val.toFixed(1)}</div>
-    </div>`;
-});
-
-// UEQ items
-const ueqItemsEl = document.getElementById('ueq-items');
-ueqAvgs.forEach((val, i) => {
-  const pct = Math.round(val);
-  const col = val >= 5.5 ? 'active-high' : val >= 4.5 ? 'active-mid' : 'active';
-  let dots = '';
-  for (let d = 1; d <= 7; d++) {
-    dots += `<div class="ueq-dot ${d <= Math.round(val) ? col : ''}"></div>`;
-  }
-  ueqItemsEl.innerHTML += `
-    <div class="ueq-item">
-      <div class="ueq-pair"><span>${ueqLabels[i][0]}</span><span>${ueqLabels[i][1]}</span></div>
-      <div class="ueq-score-row">
-        <div class="ueq-dots">${dots}</div>
-        <div class="ueq-val" style="color:${val>=5.5?'#38d9a9':val>=4.5?'#ffa94d':'#f06595'}">${val.toFixed(1)}</div>
+      <div class="sus-name" title="${d.name} (${d.role})">${d.name}</div>
+      <div class="sus-bar-bg">
+        <div class="sus-bar" style="width:${pct}%;background:${col}"></div>
       </div>
+      <div class="sus-score" style="color:${col}">${d.score}</div>
     </div>`;
 });
 
-// UEQ Dimensions
-const ueqDimsEl = document.getElementById('ueq-dims');
-const dims = [
-  { label: 'Pragmatic Quality', score: pragAvg, desc: 'Usability & Efficiency', items: 'Q1–Q4' },
-  { label: 'Hedonic Quality', score: hedAvg, desc: 'Appeal & Innovation', items: 'Q5–Q8' },
-  { label: 'Overall UEQ-S', score: overallUEQ, desc: 'Combined Score', items: 'All 8 items' },
-  { label: 'UEQ Percentile*', score: null, desc: 'vs. benchmark DB', items: '≥5.5 = Excellent' },
+// ── UEQ CHART ──
+const ueqPrag = [
+  {label:'Memudahkan', val:1.60},
+  {label:'Efisien', val:1.40},
+  {label:'Jelas', val:1.35},
+  {label:'Dapat diprediksi', val:1.50},
 ];
-dims.forEach(d => {
-  const b = d.score ? ueqBench(d.score) : null;
-  const col = d.score ? (d.score >= 5.5 ? '#38d9a9' : d.score >= 4.5 ? '#ffa94d' : '#f06595') : '#7a82a0';
-  ueqDimsEl.innerHTML += `
-    <div class="ueq-dim">
-      <div class="ueq-dim-score" style="color:${col}">${d.score ? d.score.toFixed(2) : '—'}</div>
-      <div class="ueq-dim-label">${d.label}</div>
-      <div class="ueq-dim-desc">${d.desc}</div>
-      ${b ? `<div class="ueq-bench ${b.cls}">${b.label}</div>` : '<div class="ueq-bench bench-bad">See benchmark</div>'}
-    </div>`;
-});
+const ueqHed = [
+  {label:'Menarik', val:1.50},
+  {label:'Bermanfaat', val:1.50},
+  {label:'Inovatif', val:1.30},
+  {label:'Mendukung', val:1.45},
+];
 
-// Roles
-const rolesEl = document.getElementById('roles');
-const total = roles.reduce((s,r)=>s+r.count,0);
-roles.forEach(r => {
-  const pct = ((r.count/total)*100).toFixed(0);
-  rolesEl.innerHTML += `
-    <div class="role-row">
-      <div class="role-dot" style="background:${r.color}"></div>
-      <div class="role-name">${r.name}</div>
-      <div class="role-count">${r.count}</div>
-      <div class="role-pct">${pct}%</div>
-      <div class="role-bar-bg"><div class="role-bar-fill" style="width:${pct}%;background:${r.color}"></div></div>
-    </div>`;
-});
+function renderUEQ(items, elId) {
+  const el = document.getElementById(elId);
+  items.forEach(item => {
+    const pct = ((item.val + 3) / 6) * 100;
+    const zeroPct = (3/6)*100;
+    const positive = item.val >= 0;
+    const fillLeft = positive ? zeroPct : pct;
+    const fillWidth = positive ? (pct - zeroPct) : (zeroPct - pct);
+    const col = item.val >= 1.5 ? '#1e7a4e' : item.val >= 0.5 ? '#b07d12' : '#a0201a';
+    el.innerHTML += `
+      <div class="ueq-row">
+        <div class="ueq-label">${item.label}</div>
+        <div class="ueq-track">
+          <div class="ueq-zero"></div>
+          <div class="ueq-fill" style="left:${fillLeft}%;width:${fillWidth}%;background:${col}"></div>
+        </div>
+        <div class="ueq-val" style="color:${col}">${item.val > 0 ? '+' : ''}${item.val.toFixed(2)}</div>
+      </div>`;
+  });
+}
+renderUEQ(ueqPrag, 'ueq-prag');
+renderUEQ(ueqHed, 'ueq-hed');
 
-// Completion
-const compEl = document.getElementById('completion');
-completion.forEach(c => {
-  const pct = ((c.count/total)*100).toFixed(0);
-  compEl.innerHTML += `
-    <div class="comp-item">
-      <div class="comp-val" style="color:${c.color}">${c.count}</div>
-      <div class="comp-label">${c.label}</div>
-      <div style="font-size:11px;color:${c.color};margin-top:2px">${pct}%</div>
-    </div>`;
-});
-
-// Devices
-const devEl = document.getElementById('devices');
+// ── DEVICE BARS ──
+const devices = [
+  {label:'Android', count:13, total:20},
+  {label:'Laptop / PC', count:6, total:20},
+  {label:'Tablet', count:1, total:20},
+];
+const devEl = document.getElementById('device-bars');
 devices.forEach(d => {
   devEl.innerHTML += `
-    <div class="device-row">
-      <div class="device-icon">${d.icon}</div>
-      <div class="device-name">${d.name}</div>
-      <div class="device-count">${d.count}</div>
-      <div class="bar-bg" style="flex:1;margin-left:8px">
-        <div class="bar-fill" style="width:${(d.count/20)*100}%;background:var(--accent)"></div>
-      </div>
+    <div class="sus-row" style="margin-bottom:7px">
+      <div class="sus-name">${d.label}</div>
+      <div class="sus-bar-bg"><div class="sus-bar" style="width:${(d.count/d.total)*100}%;background:var(--ink)"></div></div>
+      <div class="sus-score">${d.count}</div>
     </div>`;
 });
 
-// Overall ratings
-const ratEl = document.getElementById('ratings');
-overallRatings.forEach(r => {
-  const segs = r.scale;
-  const lit = Math.round((r.val / r.scale) * segs);
-  let segHtml = '';
-  for (let i = 0; i < segs; i++) {
-    segHtml += `<div class="star-seg ${i < lit ? 'lit' : ''}"></div>`;
-  }
-  ratEl.innerHTML += `
-    <div class="rating-row">
-      <div class="rating-label">${r.label}</div>
-      <div class="star-track">${segHtml}</div>
-      <div class="rating-num">${r.val.toFixed(1)}<span style="color:var(--muted);font-size:10px">/${r.max}</span></div>
+// ── FAMILIARITY BARS ──
+const famil = [
+  {label:'Sangat familiar', count:4},
+  {label:'Cukup familiar', count:9},
+  {label:'Pernah sedikit', count:4},
+  {label:'Belum pernah', count:3},
+];
+const familEl = document.getElementById('famil-bars');
+famil.forEach(d => {
+  familEl.innerHTML += `
+    <div class="sus-row" style="margin-bottom:7px">
+      <div class="sus-name">${d.label}</div>
+      <div class="sus-bar-bg"><div class="sus-bar" style="width:${(d.count/20)*100}%;background:var(--ink)"></div></div>
+      <div class="sus-score">${d.count}</div>
     </div>`;
 });
 </script>
