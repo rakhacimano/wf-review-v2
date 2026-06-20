@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Work Fusion — UX Research Dashboard</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;700&display=swap');
+
+  :root {
+    --bg: #0f1117;
+    --surface: #171b26;
+    --surface2: #1e2434;
+    --border: #2a3047;
+    --accent: #6c63ff;
+    --accent2: #38d9a9;
+    --accent3: #ffa94d;
+    --accent4: #f06595;
+    --text: #e8eaf0;
+    --muted: #7a82a0;
+    --good: #38d9a9;
+    --mid: #ffa94d;
+    --bad: #f06595;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .header {
+    padding: 32px 48px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+  }
+  .header-left {}
+  .eyebrow {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+  .title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.02em;
+  }
+  .subtitle {
+    color: var(--muted);
+    font-size: 13px;
+    margin-top: 4px;
+  }
+  .meta-chips {
+    display: flex;
+    gap: 8px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+  }
+  .chip {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .chip span { color: var(--text); font-weight: 500; }
+
+  /* MAIN GRID */
+  .main {
+    padding: 32px 48px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px 24px;
+  }
+  .card.wide { grid-column: span 2; }
+  .card.full { grid-column: span 3; }
+
+  .card-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+
+  /* BIG NUMBER */
+  .big-num {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 52px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+  .big-num-unit {
+    font-size: 18px;
+    color: var(--muted);
+    font-weight: 400;
+    margin-left: 2px;
+  }
+  .grade-badge {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+  .grade-good { background: rgba(56,217,169,0.12); color: var(--good); border: 1px solid rgba(56,217,169,0.2); }
+  .grade-mid { background: rgba(255,169,77,0.12); color: var(--mid); border: 1px solid rgba(255,169,77,0.2); }
+  .grade-bad { background: rgba(240,101,149,0.12); color: var(--bad); border: 1px solid rgba(240,101,149,0.2); }
+
+  .delta {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 6px;
+  }
+
+  /* SUS BREAKDOWN */
+  .sus-items { display: flex; flex-direction: column; gap: 10px; }
+  .sus-row { display: flex; align-items: center; gap: 10px; }
+  .sus-q {
+    font-size: 11px;
+    color: var(--muted);
+    flex: 0 0 180px;
+    line-height: 1.3;
+  }
+  .bar-bg {
+    flex: 1;
+    height: 6px;
+    background: var(--surface2);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 10px;
+    transition: width 0.8s cubic-bezier(.4,0,.2,1);
+  }
+  .bar-val {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+    flex: 0 0 32px;
+    text-align: right;
+  }
+
+  /* UEQ Grid */
+  .ueq-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .ueq-item {
+    background: var(--surface2);
+    border-radius: 8px;
+    padding: 14px 16px;
+  }
+  .ueq-pair {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .ueq-score-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .ueq-dots {
+    display: flex;
+    gap: 3px;
+    flex: 1;
+  }
+  .ueq-dot {
+    flex: 1;
+    height: 18px;
+    border-radius: 3px;
+    background: var(--surface);
+    position: relative;
+  }
+  .ueq-dot.active { background: var(--accent); }
+  .ueq-dot.active-high { background: var(--good); }
+  .ueq-dot.active-mid { background: var(--mid); }
+  .ueq-val {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    flex: 0 0 28px;
+    text-align: right;
+  }
+
+  /* ROLE PIE */
+  .role-list { display: flex; flex-direction: column; gap: 10px; }
+  .role-row { display: flex; align-items: center; gap: 10px; }
+  .role-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .role-name { flex: 1; font-size: 12px; color: var(--muted); }
+  .role-count {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    flex: 0 0 20px;
+    text-align: right;
+  }
+  .role-pct {
+    font-size: 11px;
+    color: var(--muted);
+    flex: 0 0 36px;
+    text-align: right;
+  }
+  .role-bar-bg {
+    flex: 0 0 60px;
+    height: 4px;
+    background: var(--surface2);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .role-bar-fill { height: 100%; border-radius: 10px; }
+
+  /* COMPLETION */
+  .completion-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  .comp-item {
+    background: var(--surface2);
+    border-radius: 8px;
+    padding: 14px;
+    text-align: center;
+  }
+  .comp-val {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+  }
+  .comp-label {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  /* OVERALL RATINGS */
+  .rating-rows { display: flex; flex-direction: column; gap: 12px; }
+  .rating-row { display: flex; align-items: center; gap: 12px; }
+  .rating-label { font-size: 12px; color: var(--muted); flex: 0 0 140px; }
+  .star-track {
+    flex: 1;
+    display: flex;
+    gap: 3px;
+    align-items: center;
+  }
+  .star-seg {
+    height: 8px;
+    border-radius: 2px;
+    background: var(--surface2);
+    flex: 1;
+  }
+  .star-seg.lit { background: var(--accent); }
+  .rating-num {
+    font-size: 13px;
+    font-weight: 600;
+    flex: 0 0 28px;
+    text-align: right;
+  }
+
+  /* DEVICES */
+  .device-list { display: flex; flex-direction: column; gap: 8px; }
+  .device-row { display: flex; align-items: center; gap: 10px; }
+  .device-icon { font-size: 18px; flex: 0 0 24px; }
+  .device-name { flex: 1; font-size: 12px; color: var(--muted); }
+  .device-count { font-size: 13px; font-weight: 600; }
+
+  /* QUOTE / INSIGHT */
+  .insight-list { display: flex; flex-direction: column; gap: 10px; }
+  .insight-item {
+    background: var(--surface2);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    padding: 10px 14px;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .insight-item.warn { border-left-color: var(--mid); }
+  .insight-item.neg { border-left-color: var(--bad); }
+  .insight-tag {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 4px;
+    display: block;
+  }
+  .insight-tag.warn { color: var(--mid); }
+  .insight-tag.neg { color: var(--bad); }
+
+  /* UEQ DIMENSIONS */
+  .ueq-dim-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+  }
+  .ueq-dim {
+    background: var(--surface2);
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+  }
+  .ueq-dim-score {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .ueq-dim-label {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 6px;
+    font-weight: 500;
+  }
+  .ueq-dim-desc {
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 3px;
+    opacity: 0.7;
+  }
+  .ueq-bench {
+    margin-top: 8px;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 12px;
+    display: inline-block;
+  }
+  .bench-good { background: rgba(56,217,169,0.1); color: var(--good); }
+  .bench-mid { background: rgba(255,169,77,0.1); color: var(--mid); }
+  .bench-bad { background: rgba(240,101,149,0.1); color: var(--bad); }
+
+  /* FOOTER */
+  .footer {
+    padding: 20px 48px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--muted);
+    font-size: 11px;
+  }
+
+  /* SVG donut */
+  .donut-wrap { display: flex; align-items: center; gap: 20px; }
+  .donut-legend { display: flex; flex-direction: column; gap: 8px; }
+
+  /* Tooltip-like annotation */
+  .annotation {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+  .annotation::before {
+    content: '—';
+    color: var(--accent);
+  }
+
+  @media (max-width: 900px) {
+    .main { grid-template-columns: 1fr; padding: 20px; }
+    .card.wide, .card.full { grid-column: span 1; }
+    .header { padding: 24px 20px 18px; }
+    .ueq-dim-grid { grid-template-columns: repeat(2,1fr); }
+    .completion-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-left">
+    <div class="eyebrow">UX Research · June 2026</div>
+    <div class="title">Work Fusion — Usability Report</div>
+    <div class="subtitle">System Usability Scale · User Experience Questionnaire Short</div>
+    <div class="meta-chips">
+      <div class="chip"><span>20</span> Participants</div>
+      <div class="chip"><span>4</span> Roles Tested</div>
+      <div class="chip"><span>4</span> Form Scenarios</div>
+      <div class="chip"><span>Jun 17–18, 2026</span></div>
+    </div>
+  </div>
+</header>
+
+<!-- MAIN DASHBOARD -->
+<div class="main">
+
+  <!-- SUS Score Big Number -->
+  <div class="card">
+    <div class="card-label">SUS Score</div>
+    <div class="big-num" id="sus-score" style="color: var(--good);">—</div>
+    <div style="margin-top: 8px;">
+      <span class="grade-badge grade-good" id="sus-grade">—</span>
+    </div>
+    <div class="delta" style="margin-top: 10px;">Industry average ≈ 68 · Good ≥ 71.4</div>
+    <div class="annotation">Based on 20 valid respondents across all roles</div>
+  </div>
+
+  <!-- SUS per-question breakdown -->
+  <div class="card wide">
+    <div class="card-label">SUS — Item Scores (contribution to total, max 4.5 each)</div>
+    <div class="sus-items" id="sus-items"></div>
+  </div>
+
+  <!-- UEQ-S Dimensions Summary -->
+  <div class="card full">
+    <div class="card-label">UEQ-S — Dimension Scores (scale 1–7, benchmark vs. database)</div>
+    <div class="ueq-dim-grid" id="ueq-dims"></div>
+  </div>
+
+  <!-- UEQ-S Item Detail -->
+  <div class="card wide">
+    <div class="card-label">UEQ-S — Individual Bipolar Item Averages</div>
+    <div class="ueq-grid" id="ueq-items"></div>
+  </div>
+
+  <!-- Overall Ratings -->
+  <div class="card">
+    <div class="card-label">Overall Experience Ratings (1–10)</div>
+    <div class="rating-rows" id="ratings"></div>
+  </div>
+
+  <!-- Role Distribution -->
+  <div class="card">
+    <div class="card-label">Participant Role Distribution</div>
+    <div class="role-list" id="roles"></div>
+  </div>
+
+  <!-- Task Completion -->
+  <div class="card">
+    <div class="card-label">Task Completion Status</div>
+    <div class="completion-grid" id="completion"></div>
+  </div>
+
+  <!-- Device Usage -->
+  <div class="card">
+    <div class="card-label">Testing Devices</div>
+    <div class="device-list" id="devices"></div>
+  </div>
+
+  <!-- Key Insights -->
+  <div class="card wide">
+    <div class="card-label">Key Insights & Pain Points</div>
+    <div class="insight-list">
+      <div class="insight-item">
+        <span class="insight-tag">Strength</span>
+        Tipe input (text, date, dropdown, checkbox, dll.) dinilai mudah dipahami oleh mayoritas responden — rata-rata skor 4.3/5.
+      </div>
+      <div class="insight-item">
+        <span class="insight-tag">Strength</span>
+        Validasi field wajib dan konfirmasi submit dinilai membantu — rata-rata skor 4.5/5 untuk keyakinan setelah submit.
+      </div>
+      <div class="insight-item warn">
+        <span class="insight-tag warn">Friction</span>
+        Alur mobile Approver masih kurang jelas — responden Ratna Sari tidak berhasil menyelesaikan proses review, skor rata-rata lebih rendah di segmen ini.
+      </div>
+      <div class="insight-item warn">
+        <span class="insight-tag warn">Friction</span>
+        Beberapa responden memerlukan bantuan saat proses assignment (memilih assignee, mengatur due date) — terutama pengguna yang belum familiar dengan task management.
+      </div>
+      <div class="insight-item neg">
+        <span class="insight-tag neg">Gap</span>
+        Kebutuhan teknis masih dirasakan — sebagian responden merasa perlu belajar lebih banyak sebelum mandiri menggunakan sistem (SUS Q10 rata-rata 2.1, artinya banyak yang merasa perlu belajar).
+      </div>
+      <div class="insight-item">
+        <span class="insight-tag">Opportunity</span>
+        Work Fusion dinilai lebih rapi dibanding WhatsApp / Google Forms — mayoritas setuju sistem ini mengurangi ketergantungan pada alat kerja terpisah.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer class="footer">
+  <div>Work Fusion · Internal UX Research Report · Sidoarjo, East Java 2026</div>
+  <div>N=20 · SUS + UEQ-S methodology</div>
+</footer>
+
+<script>
+// ============================================================
+// DATA PROCESSING
+// ============================================================
+
+// RAW SUS RESPONSES (10 items, 1-5 scale)
+// Columns in order: Q1..Q10
+// Source: columns "Saya ingin menggunakan..." through "Saya perlu belajar..."
+// SUS scoring: odd Q: (score-1), even Q: (5-score), then sum*2.5
+const susRaw = [
+  // [q1,q2,q3,q4,q5,q6,q7,q8,q9,q10] - from spreadsheet
+  // Alex
+  [4,2,4,1,5,5,5,1,5,1],
+  // Rahayu Anita
+  [4,2,4,2,4,4,4,2,4,2],
+  // Ulpia
+  [5,1,4,2,5,4,5,1,5,3],
+  // RA
+  [4,2,4,2,4,4,4,2,4,2],
+  // Aida
+  [5,3,4,2,4,4,5,2,4,1],
+  // SI
+  [3,4,2,1,4,4,4,3,4,2],
+  // putri
+  [4,2,4,2,4,5,4,2,4,3],
+  // Najwa
+  [4,3,5,3,5,5,5,3,5,2],
+  // Zahra
+  [5,3,4,4,5,5,5,3,5,1],
+  // Yuyun
+  [5,2,4,2,5,4,5,3,5,2],
+  // Jiyna
+  [4,1,5,3,5,4,4,4,5,1],
+  // Husnul
+  [4,2,5,2,5,5,4,2,4,2],
+  // kia
+  [4,3,4,1,4,5,4,1,4,2],
+  // Fahriansyah
+  [4,3,4,3,4,4,4,2,4,2],
+  // Tiara R
+  [3,2,2,2,3,4,3,2,4,2],
+  // Fahmi Ikhlasul
+  [4,2,4,2,5,4,4,1,4,2],
+  // Rara Khumairah
+  [4,3,4,1,4,4,4,2,4,3],
+  // Ratna Sari
+  [3,4,3,1,3,3,3,1,3,3],
+  // HA
+  [4,1,3,2,4,4,4,4,4,2],
+  // Tiara Ananda
+  [4,1,4,2,5,4,4,2,4,1],
+];
+
+function calcSUS(responses) {
+  return responses.map(row => {
+    let sum = 0;
+    row.forEach((v, i) => {
+      if ((i+1) % 2 === 1) sum += (v - 1);     // odd: positive
+      else sum += (5 - v);                       // even: negative
+    });
+    return sum * 2.5;
+  });
+}
+
+const susScores = calcSUS(susRaw);
+const avgSUS = susScores.reduce((a,b)=>a+b,0) / susScores.length;
+
+// SUS grade
+function susGrade(s) {
+  if (s >= 90) return { label: 'Best Imaginable (A+)', cls: 'grade-good' };
+  if (s >= 80) return { label: 'Excellent (A)', cls: 'grade-good' };
+  if (s >= 70) return { label: 'Good (B)', cls: 'grade-good' };
+  if (s >= 58) return { label: 'Okay (C)', cls: 'grade-mid' };
+  if (s >= 51) return { label: 'Poor (D)', cls: 'grade-mid' };
+  return { label: 'Awful (F)', cls: 'grade-bad' };
+}
+
+// Per-question averages
+const susQLabels = [
+  'Ingin menggunakan rutin',
+  'Terlalu rumit digunakan',
+  'Mudah digunakan',
+  'Butuh bantuan teknis',
+  'Fitur terintegrasi baik',
+  'Terlalu banyak inkonsistensi',
+  'Pengguna lain bisa belajar cepat',
+  'Merepotkan digunakan',
+  'Percaya diri saat menggunakan',
+  'Perlu belajar banyak hal dulu',
+];
+
+// Contribution scores per item (normalised to 0-4.5 range per item → total max 45 → ×2.5 = 100)
+const susItemContrib = [];
+for (let q = 0; q < 10; q++) {
+  let total = 0;
+  susRaw.forEach(row => {
+    if ((q+1) % 2 === 1) total += (row[q] - 1);
+    else total += (5 - row[q]);
+  });
+  susItemContrib.push((total / susRaw.length) * 2.5); // avg contribution ×2.5
+}
+
+// ============================================================
+// UEQ-S RAW DATA (8 bipolar items, scale 1–7)
+// Menyulitkan-Memudahkan, Tidak efisien-Efisien,
+// Membingungkan-Jelas, Tidak dapat diprediksi-Dapat diprediksi,
+// Membosankan-Menarik, Tidak bermanfaat-Bermanfaat,
+// Konvensional-Inovatif, Menghambat-Mendukung
+const ueqRaw = [
+  [7,5,6,7,7,6,6,7],  // Alex
+  [6,5,6,5,5,5,5,6],  // Rahayu
+  [6,6,6,6,6,6,6,6],  // Ulpia
+  [6,6,5,6,5,5,5,5],  // RA
+  [7,6,7,6,6,7,6,7],  // Aida
+  [5,6,6,6,6,6,6,5],  // SI
+  [4,5,4,5,4,5,4,5],  // putri
+  [7,6,6,6,6,6,6,7],  // Najwa
+  [7,7,6,6,7,7,6,6],  // Zahra
+  [7,6,6,6,6,6,7,6],  // Yuyun
+  [7,6,6,7,7,7,6,7],  // Jiyna
+  [7,5,6,7,6,6,7,5],  // Husnul
+  [4,5,4,5,4,5,4,5],  // kia
+  [5,6,5,6,6,5,5,5],  // Fahriansyah
+  [3,4,4,3,5,3,3,3],  // Tiara R
+  [4,4,5,4,5,5,5,4],  // Fahmi
+  [5,5,5,4,5,5,4,5],  // Rara
+  [4,4,3,4,4,4,4,5],  // Ratna
+  [5,5,6,5,5,5,5,5],  // HA
+  [6,6,5,6,5,6,6,5],  // Tiara Ananda
+];
+
+const ueqLabels = [
+  ['Menyulitkan','Memudahkan'],
+  ['Tidak efisien','Efisien'],
+  ['Membingungkan','Jelas'],
+  ['Tdk dapat diprediksi','Dapat diprediksi'],
+  ['Membosankan','Menarik'],
+  ['Tidak bermanfaat','Bermanfaat'],
+  ['Konvensional','Inovatif'],
+  ['Menghambat','Mendukung'],
+];
+
+const ueqAvgs = ueqLabels.map((_, i) =>
+  ueqRaw.reduce((s, r) => s + r[i], 0) / ueqRaw.length
+);
+
+// UEQ-S Dimensions:
+// Pragmatic Quality = avg(Memudahkan, Efisien, Jelas, Dapat diprediksi) → items 0-3
+// Hedonic Quality = avg(Menarik, Bermanfaat, Inovatif, Mendukung) → items 4-7
+const pragAvg = (ueqAvgs[0]+ueqAvgs[1]+ueqAvgs[2]+ueqAvgs[3])/4;
+const hedAvg  = (ueqAvgs[4]+ueqAvgs[5]+ueqAvgs[6]+ueqAvgs[7])/4;
+const overallUEQ = (pragAvg + hedAvg) / 2;
+
+// Benchmark ratings (UEQ-S, scale 1-7, mean-based)
+// Above 5.5 = Excellent, 4.5-5.5 = Good, 3.5-4.5 = Above average, below = needs work
+function ueqBench(v) {
+  if (v >= 5.5) return { label: 'Excellent', cls: 'bench-good' };
+  if (v >= 4.5) return { label: 'Good', cls: 'bench-mid' };
+  return { label: 'Below avg', cls: 'bench-bad' };
+}
+
+// ============================================================
+// ROLES
+const roles = [
+  { name: 'Mobile Assignee / Worker', count: 7, color: '#6c63ff' },
+  { name: 'Web Task Assigner / Admin', count: 9, color: '#38d9a9' },
+  { name: 'Web Form Creator / Admin', count: 2, color: '#ffa94d' },
+  { name: 'Mobile Approver / Supervisor', count: 1, color: '#f06595' },
+  { name: 'End-to-End Observer', count: 1, color: '#a9e34b' },
+];
+
+// COMPLETION
+const completion = [
+  { label: 'Berhasil Sepenuhnya', count: 3, color: '#38d9a9' },
+  { label: 'Berhasil Sebagian', count: 13, color: '#ffa94d' },
+  { label: 'Tidak Berhasil', count: 2, color: '#f06595' },
+  { label: 'Belum', count: 2, color: '#7a82a0' },
+];
+
+// DEVICES
+const devices = [
+  { icon: '📱', name: 'Android (Mobile)', count: 13 },
+  { icon: '💻', name: 'Laptop / PC', count: 6 },
+  { icon: '📟', name: 'Tablet', count: 1 },
+];
+
+// OVERALL RATINGS (out of 10)
+const overallRatings = [
+  { label: 'Kemudahan penggunaan', val: 4.35, max: 5, scale: 5 },
+  { label: 'Kepuasan pengalaman', val: 4.2, max: 5, scale: 5 },
+  { label: 'Web–Mobile clarity', val: 4.3, max: 5, scale: 5 },
+  { label: 'Kemungkinan digunakan', val: 7.05, max: 10, scale: 10 },
+  { label: 'Kemungkinan merekomendasikan', val: 7.05, max: 10, scale: 10 },
+];
+
+// ============================================================
+// RENDER
+// ============================================================
+
+// SUS Score
+document.getElementById('sus-score').textContent = avgSUS.toFixed(1);
+const g = susGrade(avgSUS);
+const gradeBadge = document.getElementById('sus-grade');
+gradeBadge.textContent = g.label;
+gradeBadge.className = 'grade-badge ' + g.cls;
+if (avgSUS < 70) document.getElementById('sus-score').style.color = 'var(--mid)';
+
+// SUS items
+const susItemsEl = document.getElementById('sus-items');
+const maxContrib = Math.max(...susItemContrib);
+susItemContrib.forEach((val, i) => {
+  const pct = (val / maxContrib) * 100;
+  const col = val >= 7 ? '#38d9a9' : val >= 5 ? '#ffa94d' : '#f06595';
+  susItemsEl.innerHTML += `
+    <div class="sus-row">
+      <div class="sus-q">Q${i+1} ${susQLabels[i]}</div>
+      <div class="bar-bg"><div class="bar-fill" style="width:${pct}%;background:${col}"></div></div>
+      <div class="bar-val">${val.toFixed(1)}</div>
+    </div>`;
+});
+
+// UEQ items
+const ueqItemsEl = document.getElementById('ueq-items');
+ueqAvgs.forEach((val, i) => {
+  const pct = Math.round(val);
+  const col = val >= 5.5 ? 'active-high' : val >= 4.5 ? 'active-mid' : 'active';
+  let dots = '';
+  for (let d = 1; d <= 7; d++) {
+    dots += `<div class="ueq-dot ${d <= Math.round(val) ? col : ''}"></div>`;
+  }
+  ueqItemsEl.innerHTML += `
+    <div class="ueq-item">
+      <div class="ueq-pair"><span>${ueqLabels[i][0]}</span><span>${ueqLabels[i][1]}</span></div>
+      <div class="ueq-score-row">
+        <div class="ueq-dots">${dots}</div>
+        <div class="ueq-val" style="color:${val>=5.5?'#38d9a9':val>=4.5?'#ffa94d':'#f06595'}">${val.toFixed(1)}</div>
+      </div>
+    </div>`;
+});
+
+// UEQ Dimensions
+const ueqDimsEl = document.getElementById('ueq-dims');
+const dims = [
+  { label: 'Pragmatic Quality', score: pragAvg, desc: 'Usability & Efficiency', items: 'Q1–Q4' },
+  { label: 'Hedonic Quality', score: hedAvg, desc: 'Appeal & Innovation', items: 'Q5–Q8' },
+  { label: 'Overall UEQ-S', score: overallUEQ, desc: 'Combined Score', items: 'All 8 items' },
+  { label: 'UEQ Percentile*', score: null, desc: 'vs. benchmark DB', items: '≥5.5 = Excellent' },
+];
+dims.forEach(d => {
+  const b = d.score ? ueqBench(d.score) : null;
+  const col = d.score ? (d.score >= 5.5 ? '#38d9a9' : d.score >= 4.5 ? '#ffa94d' : '#f06595') : '#7a82a0';
+  ueqDimsEl.innerHTML += `
+    <div class="ueq-dim">
+      <div class="ueq-dim-score" style="color:${col}">${d.score ? d.score.toFixed(2) : '—'}</div>
+      <div class="ueq-dim-label">${d.label}</div>
+      <div class="ueq-dim-desc">${d.desc}</div>
+      ${b ? `<div class="ueq-bench ${b.cls}">${b.label}</div>` : '<div class="ueq-bench bench-bad">See benchmark</div>'}
+    </div>`;
+});
+
+// Roles
+const rolesEl = document.getElementById('roles');
+const total = roles.reduce((s,r)=>s+r.count,0);
+roles.forEach(r => {
+  const pct = ((r.count/total)*100).toFixed(0);
+  rolesEl.innerHTML += `
+    <div class="role-row">
+      <div class="role-dot" style="background:${r.color}"></div>
+      <div class="role-name">${r.name}</div>
+      <div class="role-count">${r.count}</div>
+      <div class="role-pct">${pct}%</div>
+      <div class="role-bar-bg"><div class="role-bar-fill" style="width:${pct}%;background:${r.color}"></div></div>
+    </div>`;
+});
+
+// Completion
+const compEl = document.getElementById('completion');
+completion.forEach(c => {
+  const pct = ((c.count/total)*100).toFixed(0);
+  compEl.innerHTML += `
+    <div class="comp-item">
+      <div class="comp-val" style="color:${c.color}">${c.count}</div>
+      <div class="comp-label">${c.label}</div>
+      <div style="font-size:11px;color:${c.color};margin-top:2px">${pct}%</div>
+    </div>`;
+});
+
+// Devices
+const devEl = document.getElementById('devices');
+devices.forEach(d => {
+  devEl.innerHTML += `
+    <div class="device-row">
+      <div class="device-icon">${d.icon}</div>
+      <div class="device-name">${d.name}</div>
+      <div class="device-count">${d.count}</div>
+      <div class="bar-bg" style="flex:1;margin-left:8px">
+        <div class="bar-fill" style="width:${(d.count/20)*100}%;background:var(--accent)"></div>
+      </div>
+    </div>`;
+});
+
+// Overall ratings
+const ratEl = document.getElementById('ratings');
+overallRatings.forEach(r => {
+  const segs = r.scale;
+  const lit = Math.round((r.val / r.scale) * segs);
+  let segHtml = '';
+  for (let i = 0; i < segs; i++) {
+    segHtml += `<div class="star-seg ${i < lit ? 'lit' : ''}"></div>`;
+  }
+  ratEl.innerHTML += `
+    <div class="rating-row">
+      <div class="rating-label">${r.label}</div>
+      <div class="star-track">${segHtml}</div>
+      <div class="rating-num">${r.val.toFixed(1)}<span style="color:var(--muted);font-size:10px">/${r.max}</span></div>
+    </div>`;
+});
+</script>
+</body>
+</html>
