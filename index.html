@@ -3,683 +3,609 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Work Fusion — UX Research Dashboard</title>
+<title>Work Fusion — UX Research Dashboard Round 2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #f7f6f3; --surface: #ffffff; --surface2: #f2f1ee;
+    --border: rgba(0,0,0,0.08); --border-med: rgba(0,0,0,0.13);
+    --text-primary: #1a1a18; --text-secondary: #6b6b67; --text-tertiary: #a0a09b;
+    --teal: #1D9E75; --teal-light: #E1F5EE; --teal-dark: #0F6E56;
+    --amber: #BA7517; --amber-light: #FAEEDA; --amber-dark: #854F0B;
+    --red: #E24B4A; --red-light: #FCEBEB; --red-dark: #A32D2D;
+    --blue: #378ADD; --blue-light: #E6F1FB; --blue-dark: #185FA5;
+    --green-light: #EAF3DE; --green-dark: #3B6D11;
+    --radius-sm: 6px; --radius-md: 10px; --radius-lg: 14px;
+  }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text-primary); font-size: 14px; line-height: 1.6; min-height: 100vh; }
+  .page { max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem 3rem; }
 
-:root {
-  --bg: #f5f4f0;
-  --white: #ffffff;
-  --ink: #1a1a1a;
-  --ink2: #444;
-  --muted: #888;
-  --border: #e0ded8;
-  --border2: #ccc;
-  --green: #1e7a4e;
-  --green-bg: #eaf5ee;
-  --yellow: #7a6010;
-  --yellow-bg: #fdf6e0;
-  --red: #a0201a;
-  --red-bg: #fdecea;
-  --blue: #1a4fa0;
-  --blue-bg: #e8eefc;
-  --accent: #1a1a1a;
-  --tag-bg: #e8e6e0;
-}
+  .header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; }
+  .header-brand { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
+  .brand-mark { width: 36px; height: 36px; background: var(--text-primary); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; }
+  .brand-mark span { font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 500; color: #fff; letter-spacing: -0.5px; }
+  .header h1 { font-size: 22px; font-weight: 500; letter-spacing: -0.4px; }
+  .header-meta { font-size: 13px; color: var(--text-secondary); margin-top: 3px; }
+  .header-pills { display: flex; gap: 6px; flex-wrap: wrap; align-items: flex-start; padding-top: 4px; }
 
-* { margin:0; padding:0; box-sizing:border-box; }
+  .pill { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 500; padding: 5px 11px; border-radius: 20px; letter-spacing: 0.02em; white-space: nowrap; }
+  .pill-teal  { background: var(--teal-light);  color: var(--teal-dark); }
+  .pill-blue  { background: var(--blue-light);  color: var(--blue-dark); }
+  .pill-amber { background: var(--amber-light); color: var(--amber-dark); }
+  .pill-green { background: var(--green-light); color: var(--green-dark); }
+  .pill-red   { background: var(--red-light);   color: var(--red-dark); }
 
-body {
-  background: var(--bg);
-  color: var(--ink);
-  font-family: 'Inter', system-ui, sans-serif;
-  font-size: 13px;
-  line-height: 1.5;
-}
+  .kpi-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; margin-bottom: 1.25rem; }
+  .kpi { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.1rem 1.1rem 1rem; }
+  .kpi-icon { width: 30px; height: 30px; border-radius: var(--radius-sm); background: var(--surface2); display: flex; align-items: center; justify-content: center; margin-bottom: 10px; font-size: 15px; }
+  .kpi-num { font-size: 30px; font-weight: 500; letter-spacing: -1px; line-height: 1; }
+  .kpi-num sup { font-size: 14px; font-weight: 400; letter-spacing: 0; color: var(--text-secondary); vertical-align: super; margin-left: 2px; }
+  .kpi-label { font-size: 12px; color: var(--text-secondary); margin-top: 6px; }
+  .kpi-sub { margin-top: 7px; }
 
-/* ── HEADER ── */
-.header {
-  background: var(--ink);
-  color: #fff;
-  padding: 28px 40px 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: 20px;
-}
-.header-logo {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.logo-box {
-  width: 38px; height: 38px;
-  background: #fff;
-  color: var(--ink);
-  font-weight: 700;
-  font-size: 13px;
-  display: flex; align-items: center; justify-content: center;
-  border-radius: 6px;
-  letter-spacing: -0.03em;
-}
-.header-title {
-  font-size: 20px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.1;
-}
-.header-sub {
-  font-size: 12px;
-  color: rgba(255,255,255,0.55);
-  margin-top: 3px;
-}
-.header-chips {
-  display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end;
-}
-.hchip {
-  border: 1px solid rgba(255,255,255,0.2);
-  color: rgba(255,255,255,0.7);
-  padding: 4px 10px;
-  border-radius: 3px;
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.03em;
-}
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.25rem 1.4rem; }
+  .card-title { font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-tertiary); margin-bottom: 1.1rem; }
 
-/* ── GRID ── */
-.page { padding: 28px 40px 48px; }
+  .grid-2   { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+  .grid-3   { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+  .grid-2-1 { display: grid; grid-template-columns: 2fr 1fr; gap: 1rem; margin-bottom: 1rem; }
 
-.section-title {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 12px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--border);
-}
+  .bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 9px; }
+  .bar-row:last-child { margin-bottom: 0; }
+  .bar-label { font-size: 12px; color: var(--text-secondary); flex-shrink: 0; }
+  .bar-track { flex: 1; height: 8px; background: var(--surface2); border-radius: 4px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 4px; }
+  .bar-val { font-size: 12px; font-weight: 500; flex-shrink: 0; min-width: 38px; text-align: right; font-family: 'DM Mono', monospace; }
 
-.row { display: flex; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
+  .pax-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 7px; }
+  .pax-card { background: var(--surface2); border-radius: var(--radius-md); padding: 10px 12px; }
+  .pax-avatar { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 500; margin-bottom: 7px; }
+  .pax-name { font-size: 11px; font-weight: 500; color: var(--text-primary); }
+  .pax-role { font-size: 10px; color: var(--text-tertiary); margin-top: 1px; }
+  .pax-score { font-size: 22px; font-weight: 500; letter-spacing: -0.5px; margin-top: 7px; font-family: 'DM Mono', monospace; line-height: 1; }
+  .pax-badge { margin-top: 4px; }
 
-.card {
-  background: var(--white);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 18px 20px;
-  flex: 1;
-  min-width: 0;
-}
-.card.no-pad { padding: 0; }
+  .finding-list { list-style: none; padding: 0; }
+  .finding-list li { display: flex; align-items: flex-start; gap: 8px; font-size: 12.5px; padding: 6px 0; border-bottom: 1px solid var(--border); line-height: 1.45; }
+  .finding-list li:last-child { border-bottom: none; padding-bottom: 0; }
+  .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+  .pri-badge { font-size: 10px; font-weight: 500; padding: 2px 7px; border-radius: 10px; flex-shrink: 0; white-space: nowrap; margin-top: 1px; }
 
-/* ── STAT CARD ── */
-.stat-icon { font-size: 18px; margin-bottom: 6px; }
-.stat-val {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 32px;
-  font-weight: 500;
-  line-height: 1;
-  letter-spacing: -0.03em;
-}
-.stat-label {
-  font-size: 11px;
-  color: var(--muted);
-  margin-top: 4px;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  font-weight: 600;
-}
-.stat-sub {
-  font-size: 12px;
-  margin-top: 6px;
-  font-weight: 500;
-}
-.badge {
-  display: inline-block;
-  margin-top: 8px;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  padding: 3px 8px;
-  border-radius: 3px;
-}
-.badge-green { background: var(--green-bg); color: var(--green); }
-.badge-yellow { background: var(--yellow-bg); color: var(--yellow); }
-.badge-red { background: var(--red-bg); color: var(--red); }
-.badge-blue { background: var(--blue-bg); color: var(--blue); }
-.badge-gray { background: var(--tag-bg); color: var(--ink2); }
+  .scale-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .scale-row:last-child { margin-bottom: 0; }
 
-/* ── SUS BAR CHART ── */
-.sus-chart { padding: 20px; }
-.sus-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
-.sus-name { flex: 0 0 110px; font-size: 11px; color: var(--ink2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.sus-bar-bg { flex: 1; height: 14px; background: var(--bg); border-radius: 2px; overflow: hidden; position: relative; }
-.sus-bar { height: 100%; border-radius: 2px; transition: width .6s ease; }
-.sus-score { flex: 0 0 38px; font-size: 11px; font-family: 'JetBrains Mono', monospace; font-weight: 500; text-align: right; }
-.sus-legend { display: flex; gap: 14px; margin-top: 12px; }
-.sus-legend-item { display: flex; align-items: center; gap: 5px; font-size: 10px; color: var(--muted); }
-.sus-legend-dot { width: 10px; height: 10px; border-radius: 2px; }
-.sus-ref-line { position: absolute; left: 0; width: 100%; height: 100%; pointer-events: none; }
+  .iso-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 13px; gap: 8px; }
+  .iso-row:last-child { border-bottom: none; }
+  .iso-dots { display: flex; gap: 4px; flex-shrink: 0; }
+  .iso-dot { width: 10px; height: 10px; border-radius: 50%; }
 
-/* ── UEQ CHART ── */
-.ueq-chart { padding: 20px; }
-.ueq-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-.ueq-label { flex: 0 0 130px; font-size: 11px; color: var(--ink2); }
-.ueq-track { flex: 1; position: relative; height: 8px; background: var(--bg); border-radius: 2px; }
-.ueq-fill { position: absolute; height: 100%; border-radius: 2px; }
-.ueq-zero { position: absolute; left: 50%; top: -3px; bottom: -3px; width: 1px; background: var(--border2); }
-.ueq-val { flex: 0 0 36px; font-size: 11px; font-family: 'JetBrains Mono', monospace; font-weight: 500; text-align: right; }
-.ueq-dim-label { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 12px 0 8px; }
+  .tag-section { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+  .tag-group { flex: 1; min-width: 130px; }
+  .tag-group-label { font-size: 11px; font-weight: 500; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 8px; }
+  .tag-cloud { display: flex; flex-wrap: wrap; gap: 5px; }
+  .tag { font-size: 11px; padding: 4px 10px; border-radius: 20px; border: 1px solid var(--border-med); color: var(--text-secondary); background: var(--surface2); }
+  .tag-pos  { background: var(--teal-light);  border-color: #9FE1CB; color: var(--teal-dark); }
+  .tag-neg  { background: var(--red-light);   border-color: #F7C1C1; color: var(--red-dark); }
+  .tag-warn { background: var(--amber-light); border-color: #FAC775; color: var(--amber-dark); }
 
-/* ── ROLE COMPARISON ── */
-.role-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.role-card {
-  background: var(--bg);
-  border-radius: 4px;
-  padding: 12px 14px;
-}
-.role-name-tag {
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--muted);
-  margin-bottom: 4px;
-}
-.role-sus {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 22px;
-  font-weight: 500;
-}
-.role-n { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .v-divider { width: 1px; background: var(--border); align-self: stretch; }
+  .h-divider { height: 1px; background: var(--border); margin: 1rem 0; }
 
-/* ── LISTS ── */
-.insight-list { list-style: none; display: flex; flex-direction: column; gap: 7px; }
-.insight-list li {
-  display: flex;
-  gap: 8px;
-  align-items: flex-start;
-  font-size: 12px;
-  line-height: 1.5;
-  color: var(--ink2);
-}
-.insight-list li::before {
-  content: '—';
-  color: var(--muted);
-  flex-shrink: 0;
-  margin-top: 1px;
-}
-.priority-list { list-style: none; display: flex; flex-direction: column; gap: 7px; }
-.priority-item {
-  display: flex;
-  gap: 8px;
-  align-items: flex-start;
-  font-size: 12px;
-  line-height: 1.5;
-}
-.p-badge {
-  flex-shrink: 0;
-  font-size: 9px;
-  font-weight: 700;
-  padding: 2px 5px;
-  border-radius: 2px;
-  margin-top: 2px;
-  letter-spacing: 0.05em;
-}
+  /* role legend badge */
+  .role-chip { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; padding: 2px 7px; border-radius: 10px; font-weight: 500; }
 
-/* ── COMPLETION ── */
-.completion-row { display: flex; gap: 12px; align-items: stretch; }
-.comp-block {
-  flex: 1;
-  background: var(--bg);
-  border-radius: 4px;
-  padding: 14px 16px;
-  text-align: center;
-}
-.comp-num {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 28px;
-  font-weight: 500;
-}
-.comp-of { font-size: 11px; color: var(--muted); }
-.comp-label { font-size: 11px; color: var(--ink2); margin-top: 4px; }
+  .chart-wrap { position: relative; width: 100%; }
 
-/* ── TAGS ── */
-.tag-cloud { display: flex; flex-wrap: wrap; gap: 6px; }
-.tag {
-  background: var(--tag-bg);
-  border-radius: 3px;
-  padding: 4px 9px;
-  font-size: 11px;
-  font-weight: 500;
-  color: var(--ink2);
-}
-.tag.pos { background: var(--green-bg); color: var(--green); }
-.tag.neg { background: var(--red-bg); color: var(--red); }
+  /* comparison delta badge */
+  .delta { font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 20px; }
+  .delta-up   { background: var(--teal-light); color: var(--teal-dark); }
+  .delta-down { background: var(--red-light);  color: var(--red-dark); }
 
-/* ── RATING TABLE ── */
-.rating-table { width: 100%; border-collapse: collapse; }
-.rating-table td { padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
-.rating-table td:first-child { color: var(--ink2); }
-.rating-table td:last-child { text-align: right; font-family: 'JetBrains Mono', monospace; font-weight: 500; }
-.rating-bar-cell { width: 120px; padding: 0 12px !important; }
-.rating-bar-bg { height: 6px; background: var(--bg); border-radius: 2px; overflow: hidden; }
-.rating-bar-fill { height: 100%; border-radius: 2px; background: var(--ink); }
+  .footer { margin-top: 2.5rem; display: flex; align-items: center; justify-content: space-between; font-size: 11px; color: var(--text-tertiary); border-top: 1px solid var(--border); padding-top: 1rem; flex-wrap: wrap; gap: 6px; }
 
-/* ── FOOT ── */
-.footer {
-  border-top: 1px solid var(--border2);
-  padding: 14px 40px;
-  display: flex;
-  justify-content: space-between;
-  font-size: 10px;
-  color: var(--muted);
-  letter-spacing: 0.04em;
-}
-
-/* ── DIVIDER ── */
-.divider { height: 1px; background: var(--border); margin: 20px 0; }
-
-.card-title {
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--ink);
-  margin-bottom: 14px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.card-title span { color: var(--muted); font-weight: 400; }
+  @media (max-width: 900px) {
+    .kpi-grid { grid-template-columns: repeat(3, 1fr); }
+    .grid-2, .grid-2-1 { grid-template-columns: 1fr; }
+    .grid-3 { grid-template-columns: 1fr; }
+    .pax-grid { grid-template-columns: repeat(3, 1fr); }
+    .tag-section { flex-direction: column; }
+  }
+  @media (max-width: 520px) {
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    .pax-grid { grid-template-columns: repeat(2, 1fr); }
+  }
 </style>
 </head>
 <body>
-
-<!-- HEADER -->
-<header class="header">
-  <div class="header-logo">
-    <div class="logo-box">WF</div>
-    <div>
-      <div class="header-title">Work Fusion</div>
-      <div class="header-sub">UX Research Dashboard · Usability Testing Round 2 · June 2026</div>
-    </div>
-  </div>
-  <div class="header-chips">
-    <div class="hchip">20 participants</div>
-    <div class="hchip">4 form types tested</div>
-    <div class="hchip">4 roles</div>
-    <div class="hchip">SUS + UEQ-S</div>
-  </div>
-</header>
-
 <div class="page">
 
-  <!-- ── TOP STATS ── -->
-  <div class="section-title">Key Metrics</div>
-  <div class="row">
-    <div class="card" style="flex: 1.2">
-      <div class="stat-icon">📊</div>
-      <div class="stat-val">70.1<span style="font-size:16px;color:var(--muted)">/100</span></div>
-      <div class="stat-label">SUS Score</div>
-      <div class="badge badge-green">Good · Grade B</div>
-      <div class="stat-sub" style="color:var(--muted);font-size:11px;margin-top:8px;">Industry avg ≈ 68 · σ = 7.5</div>
+  <!-- HEADER -->
+  <div class="header">
+    <div>
+      <div class="header-brand">
+        <div class="brand-mark"><span>WF</span></div>
+        <h1>Work Fusion</h1>
+      </div>
+      <div class="header-meta">UX Research Dashboard &nbsp;·&nbsp; Usability Testing Round 2 &nbsp;·&nbsp; June 2026</div>
     </div>
-    <div class="card" style="flex: 1.2">
-      <div class="stat-icon">✦</div>
-      <div class="stat-val">+1.45<span style="font-size:16px;color:var(--muted)">/3</span></div>
-      <div class="stat-label">UEQ-S Overall</div>
-      <div class="badge badge-green">Above Neutral</div>
-      <div class="stat-sub" style="color:var(--muted);font-size:11px;margin-top:8px;">Pragmatic +1.46 · Hedonic +1.44</div>
-    </div>
-    <div class="card">
-      <div class="stat-icon">☺</div>
-      <div class="stat-val">4.2<span style="font-size:16px;color:var(--muted)">/5</span></div>
-      <div class="stat-label">Avg Satisfaction</div>
-      <div class="badge badge-green">Positive</div>
-    </div>
-    <div class="card">
-      <div class="stat-icon">👆</div>
-      <div class="stat-val">4.2<span style="font-size:16px;color:var(--muted)">/5</span></div>
-      <div class="stat-label">Ease of Use</div>
-      <div class="badge badge-green">Positive</div>
-    </div>
-    <div class="card">
-      <div class="stat-icon">→</div>
-      <div class="stat-val">6.8<span style="font-size:16px;color:var(--muted)">/10</span></div>
-      <div class="stat-label">Would Recommend</div>
-      <div class="badge badge-yellow">Moderate</div>
+    <div class="header-pills">
+      <span class="pill pill-blue">18 participants</span>
+      <span class="pill pill-teal">4 form types tested</span>
+      <span class="pill pill-teal">3 roles covered</span>
+      <span class="pill pill-green">↑ vs Round 1</span>
     </div>
   </div>
 
-  <!-- ── SUS + UEQ CHARTS ── -->
-  <div class="row" style="align-items: flex-start;">
-
-    <!-- SUS Chart -->
-    <div class="card no-pad" style="flex: 1.4;">
-      <div class="sus-chart">
-        <div class="card-title">SUS Scores by Participant <span>Good ≥ 71 · OK 51–70 · Poor &lt; 51</span></div>
-        <div id="sus-chart"></div>
-        <div class="sus-legend">
-          <div class="sus-legend-item"><div class="sus-legend-dot" style="background:#1e7a4e"></div> Good (≥71)</div>
-          <div class="sus-legend-item"><div class="sus-legend-dot" style="background:#b07d12"></div> OK (51–70)</div>
-          <div class="sus-legend-item"><div class="sus-legend-dot" style="background:#a0201a"></div> Poor (&lt;51)</div>
-        </div>
+  <!-- KPI STRIP -->
+  <div class="kpi-grid">
+    <div class="kpi">
+      <div class="kpi-icon">📊</div>
+      <div class="kpi-num">70.6<sup>/100</sup></div>
+      <div class="kpi-label">SUS score</div>
+      <div class="kpi-sub">
+        <span class="pill pill-teal" style="font-size:10px;padding:3px 9px">Grade C · Good</span>
+        <div style="font-size:10px;color:var(--text-tertiary);margin-top:5px">↑ +12.7 vs Round 1</div>
       </div>
     </div>
-
-    <!-- UEQ Chart -->
-    <div class="card no-pad" style="flex: 1;">
-      <div class="ueq-chart">
-        <div class="card-title">UEQ-S Dimensions <span>avg, −3 to +3</span></div>
-        <div class="ueq-dim-label">Pragmatic Quality</div>
-        <div id="ueq-prag"></div>
-        <div class="ueq-dim-label" style="margin-top:16px">Hedonic Quality</div>
-        <div id="ueq-hed"></div>
+    <div class="kpi">
+      <div class="kpi-icon">✦</div>
+      <div class="kpi-num">+1.49<sup>/3</sup></div>
+      <div class="kpi-label">UEQ overall</div>
+      <div class="kpi-sub">
+        <span class="pill pill-teal" style="font-size:10px;padding:3px 9px">Good</span>
+        <div style="font-size:10px;color:var(--text-tertiary);margin-top:5px">PQ +1.51 · HQ +1.47</div>
       </div>
     </div>
-
-  </div>
-
-  <!-- ── ROLE COMPARISON + COMPLETION ── -->
-  <div class="row">
-    <div class="card" style="flex:1">
-      <div class="card-title">SUS by Role</div>
-      <div class="role-grid">
-        <div class="role-card">
-          <div class="role-name-tag">Assigner / Admin</div>
-          <div class="role-sus">72.2</div>
-          <div class="role-n">n=9 · Web task assigner</div>
-          <div class="badge badge-green" style="margin-top:8px">Good</div>
-        </div>
-        <div class="role-card">
-          <div class="role-name-tag">Assignee / Worker</div>
-          <div class="role-sus">71.8</div>
-          <div class="role-n">n=7 · Mobile worker</div>
-          <div class="badge badge-green" style="margin-top:8px">Good</div>
-        </div>
-        <div class="role-card">
-          <div class="role-name-tag">Form Creator</div>
-          <div class="role-sus">67.5</div>
-          <div class="role-n">n=2 · Template admin</div>
-          <div class="badge badge-yellow" style="margin-top:8px">OK</div>
-        </div>
-        <div class="role-card">
-          <div class="role-name-tag">Approver / Observer</div>
-          <div class="role-sus">57.5</div>
-          <div class="role-n">n=2 · Review & approve</div>
-          <div class="badge badge-red" style="margin-top:8px">Needs work</div>
-        </div>
-      </div>
-      <div style="font-size:11px;color:var(--muted);margin-top:12px;">Approver flow scores notably lower — review UX needs attention.</div>
+    <div class="kpi">
+      <div class="kpi-icon">☺</div>
+      <div class="kpi-num">4.2<sup>/10</sup></div>
+      <div class="kpi-label">Avg satisfaction</div>
+      <div class="kpi-sub" style="font-size:11px;color:var(--teal-dark);margin-top:7px">↑ +0.7 vs Round 1</div>
     </div>
-
-    <div class="card" style="flex:1">
-      <div class="card-title">Task Completion</div>
-      <div class="completion-row">
-        <div class="comp-block">
-          <div class="comp-num" style="color:var(--green)">3</div>
-          <div class="comp-of">/20</div>
-          <div class="comp-label">Fully completed</div>
-        </div>
-        <div class="comp-block">
-          <div class="comp-num" style="color:#b07d12">13</div>
-          <div class="comp-of">/20</div>
-          <div class="comp-label">Partially completed</div>
-        </div>
-        <div class="comp-block">
-          <div class="comp-num" style="color:var(--red)">2</div>
-          <div class="comp-of">/20</div>
-          <div class="comp-label">Not completed</div>
-        </div>
-        <div class="comp-block">
-          <div class="comp-num" style="color:var(--muted)">2</div>
-          <div class="comp-of">/20</div>
-          <div class="comp-label">Not attempted</div>
-        </div>
-      </div>
-
-      <div class="divider"></div>
-
-      <div class="card-title">UX Scale Ratings <span>avg /5 unless noted</span></div>
-      <table class="rating-table">
-        <tr>
-          <td>Mudah dipahami</td>
-          <td class="rating-bar-cell"><div class="rating-bar-bg"><div class="rating-bar-fill" style="width:84%"></div></div></td>
-          <td>4.2 /5</td>
-        </tr>
-        <tr>
-          <td>Kepuasan overall</td>
-          <td class="rating-bar-cell"><div class="rating-bar-bg"><div class="rating-bar-fill" style="width:83%"></div></div></td>
-          <td>4.2 /5</td>
-        </tr>
-        <tr>
-          <td>Web–mobile jelas</td>
-          <td class="rating-bar-cell"><div class="rating-bar-bg"><div class="rating-bar-fill" style="width:86%"></div></div></td>
-          <td>4.3 /5</td>
-        </tr>
-        <tr>
-          <td>Kemungkinan pakai</td>
-          <td class="rating-bar-cell"><div class="rating-bar-bg"><div class="rating-bar-fill" style="width:68%"></div></div></td>
-          <td>6.8 /10</td>
-        </tr>
-        <tr>
-          <td>Kemungkinan rekomen</td>
-          <td class="rating-bar-cell"><div class="rating-bar-bg"><div class="rating-bar-fill" style="width:67%"></div></div></td>
-          <td>6.7 /10</td>
-        </tr>
-      </table>
+    <div class="kpi">
+      <div class="kpi-icon">👆</div>
+      <div class="kpi-num">4.3<sup>/10</sup></div>
+      <div class="kpi-label">Ease of use</div>
+      <div class="kpi-sub" style="font-size:11px;color:var(--teal-dark);margin-top:7px">↑ +0.5 vs Round 1</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-icon">→</div>
+      <div class="kpi-num">4.3<sup>/10</sup></div>
+      <div class="kpi-label">Would recommend</div>
+      <div class="kpi-sub"><span class="pill pill-blue" style="font-size:10px;padding:3px 9px">16/18 would reuse</span></div>
     </div>
   </div>
 
-  <!-- ── PAIN POINTS + STRENGTHS + PRIORITIES ── -->
-  <div class="row">
-    <div class="card" style="flex:1">
-      <div class="card-title">⚠ Pain Points</div>
-      <ul class="insight-list">
-        <li>Alur approver mobile kurang jelas — Approver tidak berhasil menyelesaikan review</li>
-        <li>Pengguna Form Creator ragu langkah selanjutnya setelah membuat template</li>
-        <li>Beberapa responden memerlukan bantuan saat memilih assignee dan mengatur due date</li>
-        <li>Inkonsistensi label dan tampilan antara web dan mobile</li>
-        <li>Status task setelah submit belum sepenuhnya meyakinkan bagi sebagian pengguna</li>
-        <li>Pengguna baru merasa perlu waktu belajar sebelum mandiri (SUS Q4 avg tinggi)</li>
-        <li>Tipe input attachment paling sering membutuhkan klarifikasi</li>
+  <!-- ROW 1: SUS bars + UEQ dims -->
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">SUS scores by participant</div>
+      <div id="sus-bars"></div>
+      <div style="display:flex;gap:14px;margin-top:12px;flex-wrap:wrap">
+        <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-secondary)"><span style="width:9px;height:9px;border-radius:2px;background:#1D9E75;display:inline-block"></span>Good ≥ 71</span>
+        <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-secondary)"><span style="width:9px;height:9px;border-radius:2px;background:#BA7517;display:inline-block"></span>OK 51–70</span>
+        <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-secondary)"><span style="width:9px;height:9px;border-radius:2px;background:#E24B4A;display:inline-block"></span>Poor &lt; 51</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">UEQ dimensions (avg, −3 to +3)</div>
+      <div id="ueq-bars"></div>
+      <div style="margin-top:12px;display:flex;gap:16px;flex-wrap:wrap">
+        <span style="font-size:11px;color:var(--text-secondary)">PQ avg: <strong style="color:var(--text-primary)">+1.51</strong></span>
+        <span style="font-size:11px;color:var(--text-secondary)">HQ avg: <strong style="color:var(--text-primary)">+1.47</strong></span>
+        <span style="font-size:11px;color:var(--text-secondary)">PQ ≈ HQ — balanced profile</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROW 2: Participants (wide) + Radar -->
+  <div class="grid-2-1" style="margin-bottom:1rem">
+    <div class="card">
+      <div class="card-title">Participants (n=18)</div>
+      <div class="pax-grid" id="pax-cards"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Role comparison (avg)</div>
+      <div class="chart-wrap" style="height:210px">
+        <canvas id="radarChart"></canvas>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:8px;justify-content:center;flex-wrap:wrap">
+        <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-secondary)"><span style="width:9px;height:9px;border-radius:2px;background:#378ADD;display:inline-block"></span>Admin</span>
+        <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-secondary)"><span style="width:9px;height:9px;border-radius:2px;background:#1D9E75;display:inline-block"></span>Assignee</span>
+        <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-secondary)"><span style="width:9px;height:9px;border-radius:2px;background:#BA7517;display:inline-block"></span>Approver</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROW 3: Findings -->
+  <div class="grid-3">
+    <div class="card">
+      <div class="card-title">⚠ Pain points</div>
+      <ul class="finding-list">
+        <li><span class="dot" style="background:#E24B4A"></span>Low confidence in task submission — status unclear after submit</li>
+        <li><span class="dot" style="background:#E24B4A"></span>Evidence/attachment upload still causes confusion</li>
+        <li><span class="dot" style="background:#E24B4A"></span>Approver flow hardest to navigate — only 1 tester</li>
+        <li><span class="dot" style="background:#BA7517"></span>Inconsistent experience across form types</li>
+        <li><span class="dot" style="background:#BA7517"></span>Web-to-mobile transition not always intuitive</li>
+        <li><span class="dot" style="background:#BA7517"></span>Assignment: due date & priority settings unclear for some</li>
+        <li><span class="dot" style="background:#B4B2A9"></span>Putri & kia UEQ outliers (0.50) despite acceptable SUS</li>
       </ul>
     </div>
-    <div class="card" style="flex:1">
+    <div class="card">
       <div class="card-title">✓ Strengths</div>
-      <ul class="insight-list">
-        <li>Tipe input (text, date, dropdown, checkbox, rating) dinilai mudah dipahami lintas role</li>
-        <li>Validasi field wajib membantu pengguna menghindari kesalahan submit</li>
-        <li>Alur web-ke-mobile secara umum dapat diikuti tanpa banyak bantuan</li>
-        <li>Evidence, timestamp, dan nama assignee dinilai sangat membantu proses review</li>
-        <li>Mengurangi ketergantungan pada WhatsApp, Google Forms, dan spreadsheet</li>
-        <li>Tampilan bersih dan konsisten diapresiasi mayoritas responden</li>
-        <li>Status konfirmasi setelah submit dinilai jelas oleh pengguna mobile</li>
+      <ul class="finding-list">
+        <li><span class="dot" style="background:#1D9E75"></span>SUS crossed "Good" threshold — 12/18 scored ≥ 70</li>
+        <li><span class="dot" style="background:#1D9E75"></span>Template & form builder flow well-understood</li>
+        <li><span class="dot" style="background:#1D9E75"></span>Task assignment flow rated easy by admin testers</li>
+        <li><span class="dot" style="background:#1D9E75"></span>Mobile assignee task-finding rated smooth</li>
+        <li><span class="dot" style="background:#1D9E75"></span>Evidence & audit trail consistently praised</li>
+        <li><span class="dot" style="background:#5DCAA5"></span>16/18 would use Work Fusion for real work</li>
+        <li><span class="dot" style="background:#5DCAA5"></span>Form consistency improved vs Round 1</li>
       </ul>
     </div>
-    <div class="card" style="flex:1">
-      <div class="card-title">↑ Top Priorities</div>
-      <ul class="priority-list">
-        <li><span class="p-badge badge-red">P1</span> Perbaiki alur approver mobile — review & approval flow perlu redesign</li>
-        <li><span class="p-badge badge-red">P1</span> Tambahkan onboarding / guidance setelah pembuatan template</li>
-        <li><span class="p-badge badge-yellow">P2</span> Perjelas status task setelah submit di sisi assignee</li>
-        <li><span class="p-badge badge-yellow">P2</span> Tingkatkan konsistensi label web ↔ mobile</li>
-        <li><span class="p-badge badge-yellow">P2</span> Tambah panduan in-app untuk pengguna baru (tooltip / walkthrough)</li>
-        <li><span class="p-badge badge-gray">P3</span> Perbaiki UX attachment — preview dan feedback upload lebih jelas</li>
-        <li><span class="p-badge badge-gray">P3</span> Optimalkan alur multi-assignee selection pada web admin</li>
+    <div class="card">
+      <div class="card-title">↑ Top priorities</div>
+      <ul class="finding-list">
+        <li><span class="pri-badge" style="background:var(--red-light);color:var(--red-dark)">P1</span>Clearer post-submit confirmation & status feedback</li>
+        <li><span class="pri-badge" style="background:var(--red-light);color:var(--red-dark)">P1</span>Improve approver mobile experience — dedicated testing</li>
+        <li><span class="pri-badge" style="background:var(--amber-light);color:var(--amber-dark)">P2</span>Simplify evidence/attachment upload UI</li>
+        <li><span class="pri-badge" style="background:var(--amber-light);color:var(--amber-dark)">P2</span>Improve web-to-mobile transition clarity</li>
+        <li><span class="pri-badge" style="background:var(--amber-light);color:var(--amber-dark)">P2</span>Unify UX parity — reduce outlier experiences</li>
+        <li><span class="pri-badge" style="background:var(--green-light);color:var(--green-dark)">P3</span>Polish due date & priority picker in assignment</li>
+        <li><span class="pri-badge" style="background:var(--green-light);color:var(--green-dark)">P3</span>Expand approver tester pool in Round 3</li>
       </ul>
     </div>
   </div>
 
-  <!-- ── FORMS + THEMES ── -->
-  <div class="row">
-    <div class="card" style="flex:1">
-      <div class="card-title">Forms Tested &amp; Qualitative Themes</div>
-      <div style="margin-bottom:12px;">
-        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:6px;">Forms tested</div>
+  <!-- ROW 4: Scale bars + ISO -->
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">UX scale ratings (avg)</div>
+      <div id="scale-bars"></div>
+      <div class="h-divider"></div>
+      <div class="card-title" style="margin-bottom:0.8rem">Satisfaction per participant (/10)</div>
+      <div class="chart-wrap" style="height:140px">
+        <canvas id="barChart"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">ISO documentation readiness</div>
+      <div id="iso-section"></div>
+      <div class="h-divider"></div>
+      <div class="card-title" style="margin-bottom:0.8rem">Task completion rate</div>
+      <div style="display:flex;align-items:center;gap:1.5rem">
+        <div class="chart-wrap" style="height:120px;width:120px;flex-shrink:0">
+          <canvas id="donutChart"></canvas>
+        </div>
+        <div>
+          <div style="margin-bottom:8px">
+            <div style="font-size:24px;font-weight:500;color:var(--teal);font-family:'DM Mono',monospace">11/18</div>
+            <div style="font-size:12px;color:var(--text-secondary)">Fully completed</div>
+          </div>
+          <div style="margin-bottom:8px">
+            <div style="font-size:24px;font-weight:500;color:var(--amber);font-family:'DM Mono',monospace">5/18</div>
+            <div style="font-size:12px;color:var(--text-secondary)">Partially completed</div>
+          </div>
+          <div>
+            <div style="font-size:24px;font-weight:500;color:var(--red);font-family:'DM Mono',monospace">2/18</div>
+            <div style="font-size:12px;color:var(--text-secondary)">Not completed</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROW 5: Round comparison -->
+  <div class="card" style="margin-bottom:1rem">
+    <div class="card-title">Round 1 vs Round 2 — key metric comparison</div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:1rem">
+      <div style="text-align:center">
+        <div style="font-size:11px;color:var(--text-tertiary);margin-bottom:6px">SUS avg</div>
+        <div style="font-size:13px;color:var(--text-secondary)">57.9 → <strong style="color:var(--teal)">70.6</strong></div>
+        <span class="delta delta-up">↑ +12.7</span>
+      </div>
+      <div style="text-align:center">
+        <div style="font-size:11px;color:var(--text-tertiary);margin-bottom:6px">UEQ overall</div>
+        <div style="font-size:13px;color:var(--text-secondary)">+1.56 → <strong style="color:var(--teal)">+1.49</strong></div>
+        <span class="delta delta-down">↓ −0.07</span>
+      </div>
+      <div style="text-align:center">
+        <div style="font-size:11px;color:var(--text-tertiary);margin-bottom:6px">Satisfaction</div>
+        <div style="font-size:13px;color:var(--text-secondary)">3.5 → <strong style="color:var(--teal)">4.2</strong></div>
+        <span class="delta delta-up">↑ +0.7</span>
+      </div>
+      <div style="text-align:center">
+        <div style="font-size:11px;color:var(--text-tertiary);margin-bottom:6px">Ease of use</div>
+        <div style="font-size:13px;color:var(--text-secondary)">3.8 → <strong style="color:var(--teal)">4.3</strong></div>
+        <span class="delta delta-up">↑ +0.5</span>
+      </div>
+      <div style="text-align:center">
+        <div style="font-size:11px;color:var(--text-tertiary);margin-bottom:6px">Participants</div>
+        <div style="font-size:13px;color:var(--text-secondary)">6 → <strong style="color:var(--teal)">18</strong></div>
+        <span class="delta delta-up">↑ ×3</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROW 6: Tags -->
+  <div class="card" style="margin-bottom:0">
+    <div class="card-title">Forms tested &amp; qualitative themes</div>
+    <div class="tag-section">
+      <div class="tag-group">
+        <div class="tag-group-label">Forms tested</div>
         <div class="tag-cloud">
           <span class="tag">Pengajuan Cuti</span>
           <span class="tag">Pembelian Barang</span>
           <span class="tag">Perjalanan Dinas</span>
           <span class="tag">Customer Feedback</span>
         </div>
-      </div>
-      <div style="margin-bottom:12px;">
-        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:6px;">Positive themes</div>
+        <div class="tag-group-label" style="margin-top:12px">Roles</div>
         <div class="tag-cloud">
-          <span class="tag pos">Audit trail</span>
-          <span class="tag pos">Clean UI</span>
-          <span class="tag pos">Templates</span>
-          <span class="tag pos">Mobile UX</span>
-          <span class="tag pos">Terintegrasi</span>
-          <span class="tag pos">Status jelas</span>
+          <span class="tag" style="background:var(--blue-light);color:var(--blue-dark);border-color:#A8C8EF">Admin / Assigner (10)</span>
+          <span class="tag" style="background:var(--teal-light);color:var(--teal-dark);border-color:#9FE1CB">Assignee / Worker (7)</span>
+          <span class="tag" style="background:var(--amber-light);color:var(--amber-dark);border-color:#FAC775">Approver (1)</span>
         </div>
       </div>
-      <div>
-        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:6px;">Negative themes</div>
+      <div class="v-divider"></div>
+      <div class="tag-group">
+        <div class="tag-group-label">Positive themes</div>
         <div class="tag-cloud">
-          <span class="tag neg">Approver flow</span>
-          <span class="tag neg">No onboarding</span>
-          <span class="tag neg">Inkonsistensi</span>
-          <span class="tag neg">Attachment UX</span>
-          <span class="tag neg">Butuh belajar</span>
+          <span class="tag tag-pos">Clean UI</span>
+          <span class="tag tag-pos">Audit trail</span>
+          <span class="tag tag-pos">Templates</span>
+          <span class="tag tag-pos">Mobile UX</span>
+          <span class="tag tag-pos">Integrated</span>
+          <span class="tag tag-pos">Efficient</span>
+          <span class="tag tag-pos">Predictable</span>
         </div>
       </div>
-    </div>
-
-    <div class="card" style="flex:1">
-      <div class="card-title">Device & Familiarity Breakdown</div>
-      <div style="margin-bottom:16px;">
-        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px;">Devices used</div>
-        <div id="device-bars"></div>
+      <div class="v-divider"></div>
+      <div class="tag-group">
+        <div class="tag-group-label">Negative themes</div>
+        <div class="tag-cloud">
+          <span class="tag tag-neg">Submit unclear</span>
+          <span class="tag tag-neg">Attachment UX</span>
+          <span class="tag tag-neg">Approver gap</span>
+          <span class="tag tag-warn">Web→Mobile</span>
+          <span class="tag tag-warn">Inconsistency</span>
+          <span class="tag tag-warn">UEQ outliers</span>
+        </div>
       </div>
-      <div class="divider"></div>
-      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px;margin-top:14px;">App familiarity</div>
-      <div id="famil-bars"></div>
     </div>
   </div>
 
+  <div class="footer">
+    <span>Work Fusion · UX Research · Round 2 · June 2026</span>
+    <span>18 participants · SUS 70.6 (Grade C) · UEQ +1.49 · PQ +1.51 · HQ +1.47</span>
+  </div>
 </div>
 
-<!-- FOOTER -->
-<footer class="footer">
-  <div>Work Fusion · UX Research · Round 2 · June 17–18, 2026</div>
-  <div>20 participants · SUS 70.1 · UEQ-S +1.45 · Generated from Google Forms data</div>
-</footer>
-
 <script>
-// ── SUS BAR CHART ──
-const susData = [
-  {name:'Alex', role:'Assignee', score:82.5},
-  {name:'Rahayu A', role:'Creator', score:70.0},
-  {name:'Ulpia', role:'Assigner', score:82.5},
-  {name:'RA', role:'Assigner', score:70.0},
-  {name:'Aida', role:'Assigner', score:75.0},
-  {name:'SI', role:'Assigner', score:57.5},
-  {name:'Putri', role:'Assignee', score:65.0},
-  {name:'Najwa', role:'Assigner', score:70.0},
-  {name:'Zahra', role:'Assignee', score:70.0},
-  {name:'Yuyun', role:'Assigner', score:77.5},
-  {name:'Jiyna', role:'Assigner', score:75.0},
-  {name:'Husnul', role:'Assigner', score:72.5},
-  {name:'Kia', role:'Assigner', score:70.0},
-  {name:'Fahriansyah', role:'Assignee', score:65.0},
-  {name:'Tiara R', role:'Observer', score:57.5},
-  {name:'Fahmi I', role:'Assignee', score:75.0},
-  {name:'Rara K', role:'Assignee', score:67.5},
-  {name:'Ratna S', role:'Approver', score:57.5},
-  {name:'HA', role:'Creator', score:65.0},
-  {name:'Tiara A', role:'Assignee', score:77.5},
+// ── DATA (pre-computed from Google Forms export) ─────────────────────────────
+const pax = [
+  {name:'Alex',         init:'AL', role:'Assignee', sus:82.5, ueq:2.38, ease:5, sat:4, use:5, rec:4,
+   susRaw:[4,2,4,1,5,5,5,1,5,1], ueqN:[3,1,2,3,3,2,2,3]},
+  {name:'Rahayu Anita', init:'RA', role:'Admin',    sus:70.0, ueq:1.38, ease:4, sat:4, use:4, rec:4,
+   susRaw:[4,2,4,2,4,4,4,2,4,2], ueqN:[2,1,2,1,1,1,1,2]},
+  {name:'Ulpia',        init:'UL', role:'Admin',    sus:82.5, ueq:2.00, ease:5, sat:4, use:5, rec:5,
+   susRaw:[5,1,4,2,5,4,5,1,5,3], ueqN:[2,2,2,2,2,2,2,2]},
+  {name:'RA',           init:'RA', role:'Admin',    sus:70.0, ueq:1.38, ease:4, sat:5, use:4, rec:4,
+   susRaw:[4,2,4,2,4,4,4,2,4,2], ueqN:[2,2,1,2,1,1,1,1]},
+  {name:'Aida',         init:'AI', role:'Admin',    sus:75.0, ueq:2.50, ease:5, sat:5, use:4, rec:5,
+   susRaw:[5,3,4,2,4,4,5,2,4,1], ueqN:[3,2,3,2,2,3,2,3]},
+  {name:'SI',           init:'SI', role:'Admin',    sus:57.5, ueq:1.75, ease:4, sat:4, use:4, rec:4,
+   susRaw:[3,4,2,1,4,4,4,3,4,2], ueqN:[1,2,2,2,2,2,2,1]},
+  {name:'putri',        init:'PT', role:'Assignee', sus:65.0, ueq:0.50, ease:4, sat:5, use:4, rec:5,
+   susRaw:[4,2,4,2,4,5,4,2,4,3], ueqN:[0,1,0,1,0,1,0,1]},
+  {name:'Najwa',        init:'NJ', role:'Admin',    sus:70.0, ueq:2.25, ease:5, sat:4, use:4, rec:5,
+   susRaw:[4,3,5,3,5,5,5,3,5,2], ueqN:[3,2,2,2,2,2,2,3]},
+  {name:'Zahra',        init:'ZS', role:'Assignee', sus:70.0, ueq:2.50, ease:4, sat:5, use:4, rec:5,
+   susRaw:[5,3,4,4,5,5,5,3,5,1], ueqN:[3,3,2,2,3,3,2,2]},
+  {name:'Yuyun',        init:'YY', role:'Admin',    sus:77.5, ueq:2.25, ease:5, sat:5, use:5, rec:4,
+   susRaw:[5,2,4,2,5,4,5,3,5,2], ueqN:[3,2,2,2,2,2,3,2]},
+  {name:'Husnul',       init:'HU', role:'Admin',    sus:72.5, ueq:2.12, ease:5, sat:4, use:5, rec:5,
+   susRaw:[4,2,5,2,5,5,4,2,4,2], ueqN:[3,1,2,3,2,2,3,1]},
+  {name:'kia',          init:'KI', role:'Admin',    sus:70.0, ueq:0.50, ease:4, sat:5, use:4, rec:5,
+   susRaw:[4,3,4,1,4,5,4,1,4,2], ueqN:[0,1,0,1,0,1,0,1]},
+  {name:'Fahriansyah',  init:'FA', role:'Assignee', sus:65.0, ueq:1.38, ease:4, sat:4, use:4, rec:4,
+   susRaw:[4,3,4,3,4,4,4,2,4,2], ueqN:[1,2,1,2,2,1,1,1]},
+  {name:'Fahmi',        init:'FI', role:'Assignee', sus:75.0, ueq:0.50, ease:4, sat:4, use:4, rec:4,
+   susRaw:[4,2,4,2,5,4,4,1,4,2], ueqN:[0,0,1,0,1,1,1,0]},
+  {name:'Rara K.',      init:'RK', role:'Assignee', sus:67.5, ueq:0.75, ease:4, sat:4, use:4, rec:4,
+   susRaw:[4,3,4,1,4,4,4,2,4,3], ueqN:[1,1,1,0,1,1,0,1]},
+  {name:'Ratna Sari',   init:'RS', role:'Approver', sus:57.5, ueq:0.00, ease:3, sat:2, use:3, rec:2,
+   susRaw:[3,4,3,1,3,3,3,1,3,3], ueqN:[0,0,-1,0,0,0,0,1]},
+  {name:'HA',           init:'HA', role:'Admin',    sus:65.0, ueq:1.12, ease:4, sat:4, use:4, rec:4,
+   susRaw:[4,1,3,2,4,4,4,4,4,2], ueqN:[1,1,2,1,1,1,1,1]},
+  {name:'Tiara A.',     init:'TA', role:'Assignee', sus:77.5, ueq:1.62, ease:4, sat:4, use:5, rec:4,
+   susRaw:[4,1,4,2,5,4,4,2,4,1], ueqN:[2,2,1,2,1,2,2,1]},
 ];
 
-function susColor(s) {
-  if (s >= 71) return '#1e7a4e';
-  if (s >= 51) return '#b07d12';
-  return '#a0201a';
-}
+const ueqDims=[
+  {label:'Memudahkan (Easy)',    mean:1.67},
+  {label:'Efisien (Efficient)',  mean:1.44},
+  {label:'Jelas (Clear)',        mean:1.39},
+  {label:'Diprediksi (Predict)', mean:1.56},
+  {label:'Menarik (Exciting)',   mean:1.44},
+  {label:'Bermanfaat (Useful)',  mean:1.56},
+  {label:'Inovatif (Innovative)',mean:1.39},
+  {label:'Mendukung (Support)',  mean:1.50}
+];
 
-const susEl = document.getElementById('sus-chart');
-susData.forEach(d => {
-  const pct = (d.score / 100) * 100;
-  const col = susColor(d.score);
-  susEl.innerHTML += `
-    <div class="sus-row">
-      <div class="sus-name" title="${d.name} (${d.role})">${d.name}</div>
-      <div class="sus-bar-bg">
-        <div class="sus-bar" style="width:${pct}%;background:${col}"></div>
-      </div>
-      <div class="sus-score" style="color:${col}">${d.score}</div>
-    </div>`;
+function susColor(s){ return s>=71?'#1D9E75':s>=51?'#BA7517':'#E24B4A'; }
+function susPill(s){ return s>=71?['Good','#E1F5EE','#0F6E56']:s>=51?['OK','#FAEEDA','#854F0B']:['Poor','#FCEBEB','#A32D2D']; }
+const roleColors = {
+  'Admin':    ['#E6F1FB','#185FA5'],
+  'Assignee': ['#E1F5EE','#0F6E56'],
+  'Approver': ['#FAEEDA','#854F0B']
+};
+const avatarPalette=[
+  ['#E6F1FB','#185FA5'],['#E1F5EE','#0F6E56'],['#FAEEDA','#854F0B'],['#FCEBEB','#A32D2D'],
+  ['#EAF3DE','#3B6D11'],['#EEEDFE','#3C3489'],['#FDE8C8','#7A3D06'],['#E8F4FD','#0D4F7A'],
+  ['#F0E8FD','#4A1E7A'],['#E8FDF3','#0D5A3A'],['#FDE8E8','#7A0D0D'],['#E8F8FD','#0D5A6A'],
+  ['#F8FDE8','#5A6A0D'],['#FDE8F5','#6A0D5A'],['#E8EDFD','#0D1A6A'],['#FDF5E8','#6A4A0D'],
+  ['#E8FDE8','#0D5A0D'],['#FDE8ED','#6A0D1A']
+];
+
+// SUS bars
+const susBarsEl = document.getElementById('sus-bars');
+pax.forEach((p,i)=>{
+  const col = susColor(p.sus);
+  susBarsEl.innerHTML += `
+  <div class="bar-row">
+    <span class="bar-label" style="width:100px;font-size:11px">${p.name}<br>
+      <span style="font-size:9px;color:var(--text-tertiary)">${p.role}</span></span>
+    <div class="bar-track"><div class="bar-fill" style="width:${p.sus}%;background:${col}"></div></div>
+    <span class="bar-val" style="color:${col}">${p.sus}</span>
+  </div>`;
 });
 
-// ── UEQ CHART ──
-const ueqPrag = [
-  {label:'Memudahkan', val:1.60},
-  {label:'Efisien', val:1.40},
-  {label:'Jelas', val:1.35},
-  {label:'Dapat diprediksi', val:1.50},
-];
-const ueqHed = [
-  {label:'Menarik', val:1.50},
-  {label:'Bermanfaat', val:1.50},
-  {label:'Inovatif', val:1.30},
-  {label:'Mendukung', val:1.45},
-];
-
-function renderUEQ(items, elId) {
-  const el = document.getElementById(elId);
-  items.forEach(item => {
-    const pct = ((item.val + 3) / 6) * 100;
-    const zeroPct = (3/6)*100;
-    const positive = item.val >= 0;
-    const fillLeft = positive ? zeroPct : pct;
-    const fillWidth = positive ? (pct - zeroPct) : (zeroPct - pct);
-    const col = item.val >= 1.5 ? '#1e7a4e' : item.val >= 0.5 ? '#b07d12' : '#a0201a';
-    el.innerHTML += `
-      <div class="ueq-row">
-        <div class="ueq-label">${item.label}</div>
-        <div class="ueq-track">
-          <div class="ueq-zero"></div>
-          <div class="ueq-fill" style="left:${fillLeft}%;width:${fillWidth}%;background:${col}"></div>
-        </div>
-        <div class="ueq-val" style="color:${col}">${item.val > 0 ? '+' : ''}${item.val.toFixed(2)}</div>
-      </div>`;
-  });
-}
-renderUEQ(ueqPrag, 'ueq-prag');
-renderUEQ(ueqHed, 'ueq-hed');
-
-// ── DEVICE BARS ──
-const devices = [
-  {label:'Android', count:13, total:20},
-  {label:'Laptop / PC', count:6, total:20},
-  {label:'Tablet', count:1, total:20},
-];
-const devEl = document.getElementById('device-bars');
-devices.forEach(d => {
-  devEl.innerHTML += `
-    <div class="sus-row" style="margin-bottom:7px">
-      <div class="sus-name">${d.label}</div>
-      <div class="sus-bar-bg"><div class="sus-bar" style="width:${(d.count/d.total)*100}%;background:var(--ink)"></div></div>
-      <div class="sus-score">${d.count}</div>
-    </div>`;
+// UEQ bars
+const ueqBarsEl = document.getElementById('ueq-bars');
+ueqDims.forEach(d=>{
+  const v=d.mean, pct=((v+3)/6)*100;
+  const col=v>=1?'#1D9E75':v>=0?'#BA7517':'#E24B4A';
+  ueqBarsEl.innerHTML += `
+  <div class="bar-row">
+    <span class="bar-label" style="width:170px;font-size:11px">${d.label}</span>
+    <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${col}"></div></div>
+    <span class="bar-val" style="color:${col}">+${v.toFixed(2)}</span>
+  </div>`;
 });
 
-// ── FAMILIARITY BARS ──
-const famil = [
-  {label:'Sangat familiar', count:4},
-  {label:'Cukup familiar', count:9},
-  {label:'Pernah sedikit', count:4},
-  {label:'Belum pernah', count:3},
+// Participant cards
+const paxEl = document.getElementById('pax-cards');
+pax.forEach((p,i)=>{
+  const [label,bg,fg] = susPill(p.sus);
+  const [avBg,avFg]   = avatarPalette[i % avatarPalette.length];
+  paxEl.innerHTML += `
+  <div class="pax-card">
+    <div class="pax-avatar" style="background:${avBg};color:${avFg}">${p.init}</div>
+    <div class="pax-name">${p.name}</div>
+    <div class="pax-role">${p.role}</div>
+    <div class="pax-score" style="color:${susColor(p.sus)}">${p.sus}</div>
+    <div style="font-size:9px;color:var(--text-tertiary);margin-top:2px">UEQ +${p.ueq.toFixed(2)}</div>
+    <div class="pax-badge"><span class="pill" style="font-size:9px;padding:2px 7px;background:${bg};color:${fg}">${label}</span></div>
+  </div>`;
+});
+
+// Scale bars
+const scaleData=[
+  {label:'Ease of use',               val:4.3, max:10},
+  {label:'Satisfaction',              val:4.2, max:10},
+  {label:'Likelihood to recommend',   val:4.3, max:10},
+  {label:'Likelihood to reuse',       val:4.2, max:10},
+  {label:'Would use regularly (SUS)', val:4.2, max:5},
+  {label:'Feels confident (SUS)',     val:4.1, max:5},
 ];
-const familEl = document.getElementById('famil-bars');
-famil.forEach(d => {
-  familEl.innerHTML += `
-    <div class="sus-row" style="margin-bottom:7px">
-      <div class="sus-name">${d.label}</div>
-      <div class="sus-bar-bg"><div class="sus-bar" style="width:${(d.count/20)*100}%;background:var(--ink)"></div></div>
-      <div class="sus-score">${d.count}</div>
-    </div>`;
+const scaleBarsEl=document.getElementById('scale-bars');
+scaleData.forEach(s=>{
+  const pct=(s.val/s.max)*100;
+  const col=pct>=70?'#1D9E75':pct>=50?'#378ADD':'#BA7517';
+  scaleBarsEl.innerHTML += `
+  <div class="scale-row">
+    <span class="bar-label" style="width:200px;flex-shrink:0;font-size:12px">${s.label}</span>
+    <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${col}"></div></div>
+    <span class="bar-val">${s.val}/${s.max}</span>
+  </div>`;
+});
+
+// ISO dots (18 participants)
+const isoData=[
+  {label:'Would use in real work',   filled:16},
+  {label:'Reduces tool sprawl',      filled:15},
+  {label:'Audit trail sufficient',   filled:16},
+  {label:'Would recommend to team',  filled:14},
+  {label:'Consistent form UX',       filled:13},
+];
+const isoEl=document.getElementById('iso-section');
+isoData.forEach(row=>{
+  const total=18;
+  // Show dots proportionally (dot per ~3 participants, max 6 dots)
+  const filled=Math.round((row.filled/total)*6);
+  let dots='';
+  for(let i=0;i<6;i++){
+    dots+=`<div class="iso-dot" style="background:${i<filled?'#1D9E75':'#e8e7e3'};border:1px solid ${i<filled?'#1D9E75':'#d0cfcc'}"></div>`;
+  }
+  isoEl.innerHTML+=`
+  <div class="iso-row">
+    <span style="font-size:12px">${row.label}</span>
+    <div style="display:flex;align-items:center;gap:8px">
+      <span style="font-size:10px;font-family:'DM Mono',monospace;color:var(--text-secondary)">${row.filled}/${total}</span>
+      <div class="iso-dots">${dots}</div>
+    </div>
+  </div>`;
+});
+
+// Radar — role comparison
+// Admin (10): Ulpia,RA,Aida,SI,Najwa,Yuyun,Husnul,kia,Rahayu Anita,HA
+// Assignee (7): Alex,putri,Zahra,Fahriansyah,Fahmi,Rara,Tiara
+// Approver (1): Ratna Sari
+function avg(arr){ return arr.reduce((a,b)=>a+b,0)/arr.length; }
+const admins   = pax.filter(p=>p.role==='Admin');
+const assignees= pax.filter(p=>p.role==='Assignee');
+const approvers= pax.filter(p=>p.role==='Approver');
+
+function roleRadar(arr){
+  const satN  = avg(arr.map(p=>p.sat))/2;   // /10 → /5
+  const easeN = avg(arr.map(p=>p.ease))/2;
+  const ueqN  = (avg(arr.map(p=>p.ueq))+3)/1.2; // UEQ −3..+3 normalised to ~0..5
+  const susN  = avg(arr.map(p=>p.sus))/20;       // SUS /100 → /5
+  const recN  = avg(arr.map(p=>p.rec))/2;
+  return [satN,easeN,ueqN,susN,recN].map(v=>+Math.min(v,5).toFixed(2));
+}
+
+new Chart(document.getElementById('radarChart'),{
+  type:'radar',
+  data:{
+    labels:['Satisfaction','Ease','UEQ (norm)','SUS (norm)','Recommend'],
+    datasets:[
+      {label:'Admin',    data:roleRadar(admins),   borderColor:'#378ADD',backgroundColor:'rgba(55,138,221,0.1)',pointBackgroundColor:'#378ADD',borderWidth:1.5,pointRadius:3,borderDash:[4,3]},
+      {label:'Assignee', data:roleRadar(assignees),borderColor:'#1D9E75',backgroundColor:'rgba(29,158,117,0.1)',pointBackgroundColor:'#1D9E75',borderWidth:1.5,pointRadius:3},
+      {label:'Approver', data:roleRadar(approvers),borderColor:'#BA7517',backgroundColor:'rgba(186,117,23,0.1)',pointBackgroundColor:'#BA7517',borderWidth:1.5,pointRadius:3,borderDash:[2,4]}
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false}},
+    scales:{r:{min:0,max:5,ticks:{stepSize:1,font:{size:9},backdropColor:'rgba(0,0,0,0)'},grid:{color:'rgba(0,0,0,0.08)'},pointLabels:{font:{size:10},color:'#6b6b67'}}}
+  }
+});
+
+// Bar chart — satisfaction per participant
+new Chart(document.getElementById('barChart'),{
+  type:'bar',
+  data:{
+    labels:pax.map(p=>p.name.split(' ')[0]),
+    datasets:[{
+      label:'Satisfaction',
+      data:pax.map(p=>p.sat),
+      backgroundColor:pax.map(p=>p.sat>=5?'#1D9E75':p.sat>=4?'#378ADD':'#BA7517'),
+      borderRadius:3,borderSkipped:false
+    }]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false}},
+    scales:{
+      y:{min:0,max:10,ticks:{stepSize:2,font:{size:10},color:'#a0a09b'},grid:{color:'rgba(0,0,0,0.05)'}},
+      x:{ticks:{font:{size:9},color:'#6b6b67',maxRotation:45},grid:{display:false}}
+    }
+  }
+});
+
+// Donut — task completion
+new Chart(document.getElementById('donutChart'),{
+  type:'doughnut',
+  data:{
+    labels:['Completed','Partial','Not completed'],
+    datasets:[{data:[11,5,2],backgroundColor:['#1D9E75','#BA7517','#E24B4A'],borderWidth:0,hoverOffset:4}]
+  },
+  options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{display:false}}}
 });
 </script>
 </body>
